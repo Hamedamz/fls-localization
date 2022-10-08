@@ -3,27 +3,39 @@ classdef FLS < handle
         id
         el
         gtl
+
         r
         alpha = .05
-        range = 1
-        elNeighbors = {}
-        gtlNeighbors = {}
+        communicationRange = 1
         distanceTraveled = 0
-        confidenceFunction
+
+        confidenceModel
+        weightModel
+        explorer
+        screen
     end
 
     properties (Dependent)
-        confidence
+        elNeighbors
+        gtlNeighbors
         missingNeighbors
         erroneousNeighbors
+
+        confidence
+        weight
+
+        isExplorationFinished
     end
 
     methods
-        function obj = FLS(el, gtl, confidenceFuntion)
+        function obj = FLS(el, gtl, weightModel, confidenceModel, explorer, screen)
             obj.id = coordToId(gtl);
             obj.el = el;
             obj.gtl = gtl;
-            obj.confidenceFunction = confidenceFuntion;
+            obj.weightModel = weightModel;
+            obj.confidenceModel = confidenceModel;
+            obj.explorer = explorer;
+            obj.screen = screen;
         end
 
         function flyTo(obj, coord)
@@ -33,35 +45,64 @@ classdef FLS < handle
             theta = 2 * obj.alpha * rand(1) - obj.alpha;
 
             R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-            vR = v * R;
+            vR = R * v;
 
             obj.distanceTraveled = obj.distanceTraveled + d;
             obj.el = vR;
         end
 
-        function computeElNeighbors(obj, screen)
+
+
+        function out = get.elNeighbors(obj)
             N = [];
-            flss = screen.values();
-            for i = 1:size(screen, 1)
+            flss = obj.screen.values();
+            for i = 1:size(obj.screen, 1)
+                if flss{i}.id == obj.id
+                    continue;
+                end
+
                 d = norm(flss{i}.el - obj.el);
-                if d <= obj.range
-                    N = [N coordToId(flss{i}.gtl)];
+                if d <= obj.communicationRange
+                    N = [N flss{i}];
                 end
             end
-            obj.elNeighbors = N;
+            out = N;
         end
 
-        function computeGtlNeighbors(obj, screen)
+        function out = get.gtlNeighbors(obj)
             N = [];
             for i = 1:size(Consts.dv2, 2)
-                id = coordToId(obj.gtl + Consts.dv2(:,i).');
+                nId = coordToId(obj.gtl + Consts.dv2(:,i));
 
-                if isKey(screen, id)
-                    N = [N id];
+                if isKey(obj.screen, nId)
+                    N = [N obj.screen(nId)];
                 end
             end
-            obj.gtlNeighbors = N;
+            out = N;
         end
+
+        function computeNeighbors(obj, screen)
+            obj.computeGtlNeighbors(screen);
+            obj.computeElNeighbors(screen);            
+        end
+
+
+
+        function initializeExplorer(obj)
+            obj.explorer.init(obj);
+        end
+
+        function exploreOneStep(obj)
+            obj.explorer.step(obj);
+        end
+
+        function finalizeExploration(obj)
+            bestCoord = obj.explorer.finalize();
+            disp(bestCoord);
+            obj.el = bestCoord;
+        end
+
+
 
         function A = get.erroneousNeighbors(obj)
             A = setdiff(obj.elNeighbors, obj.gtlNeighbors);
@@ -71,8 +112,12 @@ classdef FLS < handle
             A = setdiff(obj.gtlNeighbors, obj.elNeighbors);
         end
 
-        function conf = get.confidence(obj)
-            conf = obj.confidenceFunction(obj);
+        function out = get.confidence(obj)
+            out = obj.confidenceModel.getConfidence(obj);
+        end
+
+        function out = get.weight(obj)
+            out = obj.weightModel.getWeight(obj);
         end
     end
 end

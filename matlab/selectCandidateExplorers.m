@@ -3,7 +3,7 @@ function [flss, indexes] = selectCandidateExplorers(allFlss)
         flss = [];
     else
         minConf = Inf;
-        minFls;
+        minFls = 0;
         for i = 1:size(allFlss, 2)
             if allFlss(i).confidence < minConf
                 minFls = allFlss(i);
