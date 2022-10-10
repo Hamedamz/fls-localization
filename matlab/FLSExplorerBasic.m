@@ -17,7 +17,7 @@ classdef FLSExplorerBasic < FLSExplorer
             end
 
             obj.i = 0;
-            obj.bestScore = Inf;
+            obj.bestScore = -Inf;
             obj.bestIndex = 0;
 
         end
@@ -28,9 +28,12 @@ classdef FLSExplorerBasic < FLSExplorer
             fls.el = obj.wayPoints(:,obj.i);
             newScore = fls.weight;
             obj.scores(obj.i) = newScore;
-            disp(fls.weight)
+            %sprintf('weight: %f', fls.weight)
+            %sprintf('point: %f %f', fls.el)
+
             
-            if newScore < obj.bestScore
+            if newScore > obj.bestScore
+                %disp(obj.i)
                 obj.bestScore = newScore;
                 obj.bestIndex = obj.i;
             end
@@ -38,6 +41,7 @@ classdef FLSExplorerBasic < FLSExplorer
 
         function bestCoord = finalize(obj)
             bestCoord = obj.wayPoints(:,obj.bestIndex);
+            %disp(bestCoord);
         end
     end
 end

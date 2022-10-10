@@ -6,7 +6,7 @@ classdef FLS < handle
 
         r
         alpha = .05
-        communicationRange = 1
+        communicationRange = 1.5
         distanceTraveled = 0
 
         confidenceModel
@@ -98,7 +98,6 @@ classdef FLS < handle
 
         function finalizeExploration(obj)
             bestCoord = obj.explorer.finalize();
-            disp(bestCoord);
             obj.el = bestCoord;
         end
 
@@ -113,11 +112,11 @@ classdef FLS < handle
         end
 
         function out = get.confidence(obj)
-            out = obj.confidenceModel.getConfidence(obj);
+            out = obj.confidenceModel.getRating(obj);
         end
 
         function out = get.weight(obj)
-            out = obj.weightModel.getWeight(obj);
+            out = obj.weightModel.getRating(obj);
         end
     end
 end

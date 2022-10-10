@@ -1,6 +1,6 @@
-classdef FLSConfidence
+classdef FLSRating
     methods (Abstract)
-        getConfidence(obj, fls)
+        getRating(obj, fls)
     end
 end
 
