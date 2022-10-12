@@ -1,5 +1,8 @@
-explorerMode = 'basic';
-confidenceMode = 'basic';
-weightMode = 'basic';
+%'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'
 
-main(explorerMode, confidenceMode, weightMode);
+explorerMode = 'basic';
+confidenceMode = 'distGTL';
+weightMode = 'distGTL';
+
+clf
+flss = main(explorerMode, confidenceMode, weightMode);

@@ -6,8 +6,9 @@ classdef FLS < handle
 
         r
         alpha = .05
-        communicationRange = 1.5
+        communicationRange = 1.7
         distanceTraveled = 0
+        distanceExplored = 0
 
         confidenceModel
         weightModel
@@ -93,11 +94,14 @@ classdef FLS < handle
         end
 
         function exploreOneStep(obj)
-            obj.explorer.step(obj);
+            d = obj.explorer.step(obj);
+            obj.distanceExplored = obj.distanceExplored + d;
         end
 
         function finalizeExploration(obj)
             bestCoord = obj.explorer.finalize();
+            d = norm(bestCoord - obj.el);
+            obj.distanceExplored = obj.distanceExplored + d;
             obj.el = bestCoord;
         end
 

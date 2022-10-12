@@ -22,9 +22,9 @@ classdef FLSExplorerBasic < FLSExplorer
 
         end
 
-        function step(obj, fls)
+        function d = step(obj, fls)
             obj.i = obj.i + 1;
-
+            d = norm(obj.wayPoints(:,obj.i) - fls.el);
             fls.el = obj.wayPoints(:,obj.i);
             newScore = fls.weight;
             obj.scores(obj.i) = newScore;

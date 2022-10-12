@@ -1,4 +1,4 @@
-function main(explorerMode, confidenceMode, weightMode)
+function flss = main(explorerType, confidenceType, weightType)
 
 pointCloud = [
     0 0 1 1;
@@ -10,25 +10,27 @@ screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0])};
 
 
-explorerSet = containers.Map({'basic'}, {FLSExplorerBasic(0.5)});
+explorerSet = containers.Map({'basic'}, {FLSExplorerBasic(0.3)});
 
-confidenceModelSet = containers.Map( ...
-    {'basic', 'mN', 'eN', 'hN'}, ...
+ratingSet = containers.Map( ...
+    {'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'}, ...
     {FLSRatingDistanceTraveled(), ...
+    FLSRatingDistanceGTL(), ...
+    FLSRatingNormalizedDistanceGTL(), ...
+    FLSRatingObsGTLNeighbors(), ...
     FLSRatingMissingNeighbors(), ...
     FLSRatingErroneousNeighbors(), ...
-    FLSRatingNeighbors(.5, .5)});
-
-weightModelSet = containers.Map({'basic'}, {FLSRatingDistanceGTL()});
+    FLSRatingNeighbors(.5, .5)} ...
+    );
 
 
 for i = 1:size(pointCloud, 2)
     point = pointCloud(:,i);
     dispatcher = selectDispatcher(point, dispatchers);
 
-    explorer = explorerSet(explorerMode);
-    confidenceModel = confidenceModelSet(confidenceMode);
-    weightModel = weightModelSet(weightMode);
+    explorer = explorerSet(explorerType);
+    confidenceModel = ratingSet(confidenceType);
+    weightModel = ratingSet(weightType);
 
     fls = FLS(dispatcher.coord, point, weightModel, confidenceModel, explorer, screen);
     flss(i) = fls;
@@ -38,8 +40,25 @@ end
 
 plotScreen(flss, pointCloud, 'red');
 
-while 1
+for j=1:4
+    flag = 0;
+    for i = 1:size(flss, 2)
+        if flss(i).confidence ~= 1.0
+            flag = 0;
+        end
+    end
+    if flag
+        flss.confidence
+        for i = 1:size(flss, 2)
+            flss(i).confidenceModel = ratingSet('distNormalizedGTL');
+            flss(i).weightModel = ratingSet('distNormalizedGTL');
+        end
+        
+        disp('switched to distance heuristic')
+    end
+
     candidateExplorers = selectCandidateExplorers(flss);
+
     if size(candidateExplorers, 2) < 1
         break;
     end
@@ -59,6 +78,7 @@ while 1
             if fls.explorer.isFinished
                 fls.finalizeExploration();
                 itemsToRemove = [itemsToRemove fls];
+                sprintf('fls %s finished exploring', fls.id)
                 continue;
             end
             
@@ -69,8 +89,6 @@ while 1
         plotScreen(flss, pointCloud, 'red');
     end
 
-    
-    break;
 end
 
 reportMetrics(flss);
