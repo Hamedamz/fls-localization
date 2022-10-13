@@ -6,6 +6,7 @@ classdef FLS < handle
 
         r
         alpha = .05
+        speed = 1
         communicationRange = 1.7
         distanceTraveled = 0
         distanceExplored = 0

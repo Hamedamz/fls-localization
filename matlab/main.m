@@ -1,16 +1,13 @@
-function flss = main(explorerType, confidenceType, weightType)
+function flss = main(explorerType, confidenceType, weightType, pointCloud)
 
-pointCloud = [
-    0 0 1 1;
-    0 1 1 0
-    ] + 5;
+
 
 flss = FLS.empty(size(pointCloud, 2), 0);
 screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0])};
 
 
-explorerSet = containers.Map({'basic'}, {FLSExplorerBasic(0.3)});
+explorerSet = containers.Map({'basic', 'TriL'}, {FLSExplorerBasic(0.3), FLSExplorerTrilateration()});
 
 ratingSet = containers.Map( ...
     {'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'}, ...
@@ -40,22 +37,22 @@ end
 
 plotScreen(flss, pointCloud, 'red');
 
-for j=1:4
-    flag = 0;
-    for i = 1:size(flss, 2)
-        if flss(i).confidence ~= 1.0
-            flag = 0;
-        end
-    end
-    if flag
-        flss.confidence
-        for i = 1:size(flss, 2)
-            flss(i).confidenceModel = ratingSet('distNormalizedGTL');
-            flss(i).weightModel = ratingSet('distNormalizedGTL');
-        end
-        
-        disp('switched to distance heuristic')
-    end
+for j=1:10
+%     flag = 0;
+%     for i = 1:size(flss, 2)
+%         if flss(i).confidence ~= 1.0
+%             flag = 0;
+%         end
+%     end
+%     if flag
+%         flss.confidence
+%         for i = 1:size(flss, 2)
+%             flss(i).confidenceModel = ratingSet('distNormalizedGTL');
+%             flss(i).weightModel = ratingSet('distNormalizedGTL');
+%         end
+%         
+%         disp('switched to distance heuristic')
+%     end
 
     candidateExplorers = selectCandidateExplorers(flss);
 
