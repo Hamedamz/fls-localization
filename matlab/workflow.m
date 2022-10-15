@@ -2,7 +2,7 @@
 seed = 1;
 rng(seed);
 
-explorerMode = 'TriL';
+explorerMode = 'TriA';
 confidenceMode = 'distNormalizedGTL';
 weightMode = 'distNormalizedGTL';
 
@@ -22,4 +22,4 @@ circle = [
     ] + 6;
 
 clf
-flss = main(explorerMode, confidenceMode, weightMode, circle);
+flss = main(explorerMode, confidenceMode, weightMode, square);
