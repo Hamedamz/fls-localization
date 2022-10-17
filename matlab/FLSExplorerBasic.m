@@ -40,7 +40,9 @@ classdef FLSExplorerBasic < FLSExplorer
         end
 
         function bestCoord = finalize(obj)
-            bestCoord = obj.wayPoints(:,obj.bestIndex);
+            if obj.bestIndex > 0
+                bestCoord = obj.wayPoints(:,obj.bestIndex);
+            end
             %disp(bestCoord);
         end
     end

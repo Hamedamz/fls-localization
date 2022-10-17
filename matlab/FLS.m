@@ -7,7 +7,7 @@ classdef FLS < handle
         r
         alpha = .05
         speed = 1
-        communicationRange = 1.7
+        communicationRange = 2
         distanceTraveled = 0
         distanceExplored = 0
 
@@ -15,6 +15,8 @@ classdef FLS < handle
         weightModel
         explorer
         screen
+
+        freeze = 0
     end
 
     properties (Dependent)
@@ -73,13 +75,21 @@ classdef FLS < handle
 
         function out = get.gtlNeighbors(obj)
             N = [];
-            for i = 1:size(Consts.dv2, 2)
-                nId = coordToId(obj.gtl + Consts.dv2(:,i));
+            d = floor(obj.communicationRange);
+            for i = -d:d
+                for j = -d:d
+                    if i == 0 && j == 0
+                        continue;
+                    end
 
-                if isKey(obj.screen, nId)
-                    N = [N obj.screen(nId)];
+                    nId = coordToId(obj.gtl + [i; j]);
+                    
+                    if isKey(obj.screen, nId)
+                        N = [N obj.screen(nId)];
+                    end
                 end
             end
+
             out = N;
         end
 
@@ -99,11 +109,17 @@ classdef FLS < handle
             obj.distanceExplored = obj.distanceExplored + d;
         end
 
-        function finalizeExploration(obj)
+        function m = finalizeExploration(obj)
             bestCoord = obj.explorer.finalize();
+            if isnan(bestCoord)
+                m = 0;
+                return;
+            end
             d = norm(bestCoord - obj.el);
             obj.distanceExplored = obj.distanceExplored + d;
             obj.el = bestCoord;
+            obj.freeze = 1;
+            m = 1;
         end
 
 
@@ -117,7 +133,11 @@ classdef FLS < handle
         end
 
         function out = get.confidence(obj)
-            out = obj.confidenceModel.getRating(obj);
+            if obj.freeze
+                out = 1.0;
+            else
+                out = obj.confidenceModel.getRating(obj);
+            end
         end
 
         function out = get.weight(obj)

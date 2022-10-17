@@ -14,33 +14,50 @@ classdef FLSExplorerTriangulation < FLSExplorer
                 return;
             end
 
-            n = [fls.gtlNeighbors.el];
-            g = [fls.gtlNeighbors.gtl];
+            randi = randperm(size(fls.gtlNeighbors, 2));
 
-            [xn2,yn2] = poly2ccw(n(1,:), n(2,:));
-            [xg2,yg2] = poly2ccw(g(1,:), g(2,:));
+            for i = 1:size(randi, 2)
+                flag = 0;
+                n = [fls.gtlNeighbors(randi(1:3)).el];
+                g = [fls.gtlNeighbors(randi(1:3)).gtl];
 
-            n = [xn2; yn2];
-            g = [xg2; yg2];
+                for j = 1:3
+                    [xn2,yn2] = poly2ccw(n(1,:), n(2,:));
+                    [xg2,yg2] = poly2ccw(g(1,:), g(2,:));
+        
+                    n = [xn2; yn2];
+                    g = [xg2; yg2];
+        
+                    a1 = getVectorAngleX(fls.gtl, g(:,1));
+                    a2 = getVectorAngleX(fls.gtl, g(:,2));
+                    a3 = getVectorAngleX(fls.gtl, g(:,3));
+        
+                    alpha = a2 - a1;
+                    betha = a3 - a1;
+        
+                    if alpha < pi && betha < pi
+                        alpha = a2 - a1;
+                        betha = a3 - a2;
+                        if sin(alpha) == 0 || sin(betha) == 0 || sin(alpha) < 0 || sin(betha) < 0
+                            continue;
+                        end
+                        flag = 1;
+                        break;
+                    end
+                    n = circshift(n, 1);
+                    g = circshift(g, 1);
+                end
 
-            for j=1:3
-                n1 = n(:,1);
-                n2 = n(:,2);
-                n3 = n(:,3);
-    
-                a1 = getVectorAngleX(fls.gtl, g(:,1));
-                a2 = getVectorAngleX(fls.gtl, g(:,2));
-                a3 = getVectorAngleX(fls.gtl, g(:,3));
-    
-                alpha = a2 - a1;
-                betha = a3 - a1;
-    
-                if alpha < pi && betha < pi
+                if flag
                     break;
                 end
-                n = [n(:,2) n(:,3) n(:,1)];
-                g = [g(:,2) g(:,3) g(:,1)];
+
+                randi = circshift(randi, 1);
             end
+
+            n1 = n(:,1);
+            n2 = n(:,2);
+            n3 = n(:,3);
 
             alpha = a2 - a1;
             betha = a3 - a2;
@@ -58,10 +75,17 @@ classdef FLSExplorerTriangulation < FLSExplorer
             ca = [p12(1) - la * v12(2); p12(2) + la * v12(1)];
             cb = [p23(1) - lb * v23(2); p23(2) + lb * v23(1)];
 
+            if ra < 0 || rb < 0
+                obj.wayPoints(:,1) = fls.el;
+                return;
+            end
+%             if fls.id == "5.5"
+            
             rectangle('Position',[ca.' - [ra ra] 2*[ra ra]],'Curvature',[1 1])
             rectangle('Position',[cb.' - [rb rb] 2*[rb rb]],'Curvature',[1 1])
 %             scatter(ca(1), ca(2))
 %             scatter(cb(1), cb(2))
+%             end
 
             % return error if the centers of the two circles are too close
 
@@ -74,6 +98,8 @@ classdef FLSExplorerTriangulation < FLSExplorer
             c2m = rb * cos(gamma);
             m = cb + c2m * cba;
             R = 2 * m - n2;
+            disp(fls.id)
+            disp(R)
             scatter(R(1), R(2))
 
             obj.wayPoints(:,1) = R;
@@ -83,6 +109,13 @@ classdef FLSExplorerTriangulation < FLSExplorer
         function d = step(obj, fls)
             obj.i = obj.i + 1;
             d = norm(obj.wayPoints(:,obj.i) - fls.el);
+
+            if d > fls.r*2 || d == 0
+                fls.freeze = 1;
+                d = 0;
+                return;
+            end
+
             fls.el = obj.wayPoints(:,obj.i);
             newScore = fls.weight;
             obj.scores(obj.i) = newScore;
@@ -98,7 +131,11 @@ classdef FLSExplorerTriangulation < FLSExplorer
         end
 
         function bestCoord = finalize(obj)
-            bestCoord = obj.wayPoints(:,obj.bestIndex);
+            if obj.bestIndex > 0
+                bestCoord = obj.wayPoints(:,obj.bestIndex);
+            else
+                bestCoord = nan;
+            end
             %disp(bestCoord);
         end
     end

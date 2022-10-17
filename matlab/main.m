@@ -40,11 +40,11 @@ end
 
 plotScreen(flss, pointCloud, 'red');
 
-for j=1:10
+for j=1:40
 %     flag = 0;
 %     for i = 1:size(flss, 2)
 %         if flss(i).confidence ~= 1.0
-%             flag = 0;
+%             flasg = 0;
 %         end
 %     end
 %     if flag
@@ -56,6 +56,18 @@ for j=1:10
 %         
 %         disp('switched to distance heuristic')
 %     end
+
+    disp([flss.freeze])
+    if all([flss.freeze] == 1) 
+        for i = 1:size(flss, 2)
+            flss(i).freeze = 0;
+        end
+    end
+
+    if all([flss.confidence] == 1.0) 
+        disp("all confidences are 1")
+        break;
+    end
 
     candidateExplorers = selectCandidateExplorers(flss);
 
@@ -76,7 +88,12 @@ for j=1:10
             fls = concurrentExplorers(i);
 
             if fls.explorer.isFinished
-                fls.finalizeExploration();
+                m = fls.finalizeExploration();
+%                 if m
+%                     for j = 1:size(flss, 2)
+%                         flss(j).freeze = 0;
+%                     end
+%                 end
                 itemsToRemove = [itemsToRemove fls];
                 sprintf('fls %s finished exploring', fls.id)
                 continue;
@@ -86,6 +103,7 @@ for j=1:10
         end
 
         concurrentExplorers = setdiff(concurrentExplorers, itemsToRemove);
+        clf
         plotScreen(flss, pointCloud, 'red');
     end
 
