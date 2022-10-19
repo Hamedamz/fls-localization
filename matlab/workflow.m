@@ -1,8 +1,12 @@
 %'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'
+addpath cli/;
+
 seed = 1;
 rng(seed);
 
-explorerMode = 'TriA';
+
+clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
+explorerMode = Prompt("Select exploration method:", {"Triangulation", "Trilateration"}, 1).getUserInput();
 confidenceMode = 'distNormalizedGTL';
 weightMode = 'distNormalizedGTL';
 
@@ -27,4 +31,4 @@ circle = [
     ] + 6;
 
 clf
-flss = main(explorerMode, confidenceMode, weightMode, square3);
+flss = main(explorerMode, confidenceMode, weightMode, square3, clear);

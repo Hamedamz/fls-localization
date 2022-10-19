@@ -1,4 +1,4 @@
-function flss = main(explorerType, confidenceType, weightType, pointCloud)
+function flss = main(explorerType, confidenceType, weightType, pointCloud, clear)
 
 
 
@@ -7,7 +7,7 @@ screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0])};
 
 
-explorerSet = containers.Map({'basic', 'TriL', 'TriA'}, ...
+explorerSet = containers.Map({'basic', 'Trilateration', 'Triangulation'}, ...
     {FLSExplorerBasic(0.3), ...
     FLSExplorerTrilateration(), ...
     FLSExplorerTriangulation()});
@@ -40,7 +40,7 @@ end
 
 plotScreen(flss, pointCloud, 'red');
 
-for j=1:40
+for j=1:10
 %     flag = 0;
 %     for i = 1:size(flss, 2)
 %         if flss(i).confidence ~= 1.0
@@ -103,7 +103,11 @@ for j=1:40
         end
 
         concurrentExplorers = setdiff(concurrentExplorers, itemsToRemove);
-        clf
+        
+        if clear
+            clf
+        end
+        
         plotScreen(flss, pointCloud, 'red');
     end
 
