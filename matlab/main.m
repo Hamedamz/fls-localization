@@ -57,7 +57,7 @@ for j=1:40
 %         disp('switched to distance heuristic')
 %     end
 
-    disp([flss.freeze])
+    %disp([flss.freeze])
     if all([flss.freeze] == 1) 
         for i = 1:size(flss, 2)
             flss(i).freeze = 0;

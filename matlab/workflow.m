@@ -32,4 +32,7 @@ circle = [
     ] + 6;
 
 clf
-flss = main(explorerType, confidenceType, weightType, distType, square3, clear);
+
+p = getPointCloudFromPNG("./assets/butterfly2.png");
+
+flss = main(explorerType, confidenceType, weightType, distType, p, clear);
