@@ -6,9 +6,10 @@ rng(seed);
 
 
 clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
-explorerMode = Prompt("Select exploration method:", {"Triangulation", "Trilateration"}, 1).getUserInput();
-confidenceMode = 'distNormalizedGTL';
-weightMode = 'distNormalizedGTL';
+explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration"}, 1).getUserInput();
+confidenceType = 'distNormalizedGTL';
+weightType = 'distNormalizedGTL';
+distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
 
 square = [
     0 0 1 1;
@@ -31,4 +32,4 @@ circle = [
     ] + 6;
 
 clf
-flss = main(explorerMode, confidenceMode, weightMode, square3, clear);
+flss = main(explorerType, confidenceType, weightType, distType, square3, clear);

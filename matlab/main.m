@@ -1,4 +1,4 @@
-function flss = main(explorerType, confidenceType, weightType, pointCloud, clear)
+function flss = main(explorerType, confidenceType, weightType, distType, pointCloud, clear)
 
 
 
@@ -7,10 +7,9 @@ screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0])};
 
 
-explorerSet = containers.Map({'basic', 'Trilateration', 'Triangulation'}, ...
-    {FLSExplorerBasic(0.3), ...
-    FLSExplorerTrilateration(), ...
-    FLSExplorerTriangulation()});
+explorerSet = {FLSExplorerTriangulation() FLSExplorerTrilateration() FLSExplorerBasic(0.3)};
+
+distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
 
 ratingSet = containers.Map( ...
     {'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'}, ...
@@ -28,11 +27,12 @@ for i = 1:size(pointCloud, 2)
     point = pointCloud(:,i);
     dispatcher = selectDispatcher(point, dispatchers);
 
-    explorer = explorerSet(explorerType);
+    explorer = explorerSet{explorerType};
     confidenceModel = ratingSet(confidenceType);
     weightModel = ratingSet(weightType);
+    distModel = distModelSet{distType};
 
-    fls = FLS(dispatcher.coord, point, weightModel, confidenceModel, explorer, screen);
+    fls = FLS(dispatcher.coord, point, weightModel, confidenceModel, distModel, explorer, screen);
     flss(i) = fls;
     fls.flyTo(point);
     screen(fls.id) = fls;
@@ -40,7 +40,7 @@ end
 
 plotScreen(flss, pointCloud, 'red');
 
-for j=1:10
+for j=1:40
 %     flag = 0;
 %     for i = 1:size(flss, 2)
 %         if flss(i).confidence ~= 1.0

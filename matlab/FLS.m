@@ -13,6 +13,7 @@ classdef FLS < handle
 
         confidenceModel
         weightModel
+        distModel
         explorer
         screen
 
@@ -32,12 +33,13 @@ classdef FLS < handle
     end
 
     methods
-        function obj = FLS(el, gtl, weightModel, confidenceModel, explorer, screen)
+        function obj = FLS(el, gtl, weightModel, confidenceModel, distModel, explorer, screen)
             obj.id = coordToId(gtl);
             obj.el = el;
             obj.gtl = gtl;
             obj.weightModel = weightModel;
             obj.confidenceModel = confidenceModel;
+            obj.distModel = distModel;
             obj.explorer = explorer;
             obj.screen = screen;
         end
