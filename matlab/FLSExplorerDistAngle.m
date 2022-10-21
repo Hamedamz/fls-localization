@@ -22,6 +22,9 @@ classdef FLSExplorerDistAngle < FLSExplorer
                     N = fls.gtlNeighbors(i);
                 end
             end
+%             rp = randperm(n);
+%             rp = rp(1);
+%             N = fls.gtlNeighbors(rp);
 
             A = getVectorAngleX(fls.gtl, N.gtl);
             alpha = getVectorAngleX(fls.el, N.el);
@@ -41,7 +44,7 @@ classdef FLSExplorerDistAngle < FLSExplorer
                 beta = asin(D*sin(a)/v);
             else
                 gama = asin(d*sin(a)/v);
-                beta = 180 - gama - a;
+                beta = pi - gama - a;
             end
 
             if alpha > A

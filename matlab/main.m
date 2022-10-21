@@ -110,8 +110,10 @@ for j=1:1000
                     itemsToRemove = [itemsToRemove fls];
                     fprintf('%d - fls %s with confidence %.2f finished exploring\n', j, fls.id, fls.confidence);
 %                 if m
-%                     for j = 1:size(flss, 2)
-%                         flss(j).freeze = 0;
+%                     for k = 1:size(flss, 2)
+%                         if flss(k).id ~= fls.id
+%                             flss(k).freeze = 0;
+%                         end
 %                     end
 %                 end
                 end

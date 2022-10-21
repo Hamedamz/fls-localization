@@ -7,7 +7,7 @@ classdef FLS < handle
         r
         alpha = 3 / 180 * pi
         speed = 1
-        communicationRange = 1
+        communicationRange = 2
         distanceTraveled = 0
         distanceExplored = 0
 
