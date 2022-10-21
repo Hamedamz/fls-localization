@@ -30,9 +30,9 @@ classdef FLSExplorerLoGlo < FLSExplorer
                 return;
             end
 
-            flsCenter = FLS([0; 25], [0; 25], nan, nan, nan, nan, nan);
-            flsA = FLS([20; 25], [20; 15], nan, nan, nan, nan, nan);
-            flsB = FLS([30; 20], [30; 20], nan, nan, nan, nan, nan);
+            flsCenter = FLS([0; 0], [0; 0], nan, nan, nan, nan, nan);
+            flsA = FLS([10; 5], [10; 5], nan, nan, nan, nan, nan);
+            flsB = FLS([20; 30], [20; 30], nan, nan, nan, nan, nan);
             [R, n1, n2, n3, ca, cb, ra, rb, success] = solveTriangulation(fls, [flsCenter flsA flsB]);
 
             if success
