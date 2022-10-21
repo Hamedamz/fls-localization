@@ -15,9 +15,13 @@ classdef FLSExplorerTrilateration < FLSExplorer
             d1 = norm(n1.gtl - fls.gtl);
             d2 = norm(n2.gtl - fls.gtl);
 
-            [out1, out2] = CircleIntersection(n1.el(1,1), n1.el(2,1), d1, n2.el(1,1), n2.el(2,1), d2);
+%             [o1, o2] = CircleIntersection(n1.el(1,1), n1.el(2,1), d1, n2.el(1,1), n2.el(2,1), d2);
 
-            disp(out1(1,1))
+            [xout,yout] = circcirc(n1.el(1,1), n1.el(2,1), d1, n2.el(1,1), n2.el(2,1), d2);
+
+            out1 = [xout(1); yout(1)];
+            out2 = [xout(2); yout(2)];
+
             if isnan(out1(1,1))
                 obj.wayPoints(:,1) = fls.el;
                 return

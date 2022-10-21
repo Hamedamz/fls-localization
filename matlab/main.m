@@ -7,7 +7,7 @@ screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0])};
 
 
-explorerSet = {FLSExplorerTriangulation() FLSExplorerTrilateration() FLSExplorerBasic(0.3)};
+explorerSet = {FLSExplorerTriangulation() FLSExplorerTrilateration() FLSExplorerTriangulation() FLSExplorerDistAngle() FLSExplorerBasic(0.3)};
 
 distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
 
@@ -38,9 +38,15 @@ for i = 1:size(pointCloud, 2)
     screen(fls.id) = fls;
 end
 
-plotScreen(flss, pointCloud, 'red');
 
-for j=1:40
+plotScreen([flss.gtl], 'blue', 1);
+
+plotScreen([flss.el], 'red', 2);
+
+plotScreen([flss.el], 'red', 3);
+hold on
+
+for j=1:1000
 %     flag = 0;
 %     for i = 1:size(flss, 2)
 %         if flss(i).confidence ~= 1.0
@@ -64,10 +70,10 @@ for j=1:40
         end
     end
 
-    if all([flss.confidence] == 1.0) 
-        disp("all confidences are 1")
-        break;
-    end
+%     if all([flss.confidence] > .99) 
+%         disp("all confidences are 1")
+%         break;
+%     end
 
     candidateExplorers = selectCandidateExplorers(flss);
 
@@ -82,6 +88,13 @@ for j=1:40
     end
 
     while size(concurrentExplorers, 2)
+        if clear
+            clf
+        end
+
+        plotScreen([flss.el], 'red', 3);
+        hold on
+
         itemsToRemove = [];
 
         for i = 1:size(concurrentExplorers, 2)
@@ -89,13 +102,19 @@ for j=1:40
 
             if fls.explorer.isFinished
                 m = fls.finalizeExploration();
+                if ~m && explorerType == 3
+                    fls.explorer = explorerSet{2};
+                    fprintf("switched %s to trialateration\n", fls.id);
+                    fls.initializeExplorer();
+                else
+                    itemsToRemove = [itemsToRemove fls];
+                    fprintf('%d - fls %s with confidence %.2f finished exploring\n', j, fls.id, fls.confidence);
 %                 if m
 %                     for j = 1:size(flss, 2)
 %                         flss(j).freeze = 0;
 %                     end
 %                 end
-                itemsToRemove = [itemsToRemove fls];
-                sprintf('fls %s finished exploring', fls.id)
+                end
                 continue;
             end
             
@@ -103,18 +122,12 @@ for j=1:40
         end
 
         concurrentExplorers = setdiff(concurrentExplorers, itemsToRemove);
-        
-        if clear
-            clf
-        end
-        
-        plotScreen(flss, pointCloud, 'red');
     end
 
 end
 
 reportMetrics(flss);
-plotScreen(flss, pointCloud, 'black')
+plotScreen([flss.el], 'black', 3)
 
 end
 

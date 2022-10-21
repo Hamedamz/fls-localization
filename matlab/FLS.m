@@ -5,9 +5,9 @@ classdef FLS < handle
         gtl
 
         r
-        alpha = .05
+        alpha = 3 / 180 * pi
         speed = 1
-        communicationRange = 2
+        communicationRange = 1
         distanceTraveled = 0
         distanceExplored = 0
 

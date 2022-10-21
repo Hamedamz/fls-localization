@@ -19,7 +19,7 @@ classdef FLSExplorer < handle
 
     methods
         function out = get.isFinished(obj)
-            out = obj.i == size(obj.wayPoints, 2) && obj.i;
+            out = obj.i >= size(obj.wayPoints, 2) && obj.i;
         end
     end
 end
