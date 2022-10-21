@@ -6,7 +6,7 @@ rng(seed);
 
 
 clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
-explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration", "Hybrid", "DistAngle"}, 1).getUserInput();
+explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration", "Hybrid", "DistAngle", "LoGlo"}, 1).getUserInput();
 confidenceType = 'distNormalizedGTL';
 weightType = 'distNormalizedGTL';
 distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();

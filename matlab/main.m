@@ -7,7 +7,13 @@ screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0])};
 
 
-explorerSet = {FLSExplorerTriangulation() FLSExplorerTrilateration() FLSExplorerTriangulation() FLSExplorerDistAngle() FLSExplorerBasic(0.3)};
+explorerSet = {
+    FLSExplorerTriangulation()
+    FLSExplorerTrilateration()
+    FLSExplorerTriangulation()
+    FLSExplorerDistAngle()
+    FLSExplorerLoGlo()
+    FLSExplorerBasic(0.3)};
 
 distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
 
@@ -78,7 +84,15 @@ for j=1:1000
     candidateExplorers = selectCandidateExplorers(flss);
 
     if size(candidateExplorers, 2) < 1
-        break;
+        if all([flss.freeze] == 0)
+            break;
+        else
+            for k = 1:size(flss, 2)
+                flss(k).freeze = 0;
+            end
+    
+            continue;
+        end
     end
 
     concurrentExplorers = selectConcurrentExplorers(candidateExplorers);
