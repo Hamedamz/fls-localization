@@ -59,6 +59,8 @@ end
 avg = sum / count;
 cavg = csum / i;
 
-sprintf('Difference between EL and GTL:\nmin: %f\nmax: %f\navg: %f\nConfidence:\nmin: %f\nmax: %f\navg: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, max, avg, cmin, cmax, cavg, totalTraveled, numFLSMoved, maxTime)
+dH = hausdorff([flss.gtl], [flss.el]);
+
+sprintf('Hausdorff Distance: %f\nDifference between EL and GTL:\nmin: %f\nmax: %f\navg: %f\nConfidence:\nmin: %f\nmax: %f\navg: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', dH, min, max, avg, cmin, cmax, cavg, totalTraveled, numFLSMoved, maxTime)
 end
 
