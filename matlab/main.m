@@ -81,6 +81,12 @@ for j=1:1000
 %         break;
 %     end
 
+%     dH = hausdorff([flss.gtl], [flss.el]);
+%     if dH < .4
+%         break
+%     end
+
+
     candidateExplorers = selectCandidateExplorers(flss);
 
     if size(candidateExplorers, 2) < 1

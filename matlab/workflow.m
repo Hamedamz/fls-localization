@@ -44,7 +44,7 @@ switch shape
     case 4
         p = square3;
     case 5
-        p = circle;
+        p = square;
 end
 
 clf

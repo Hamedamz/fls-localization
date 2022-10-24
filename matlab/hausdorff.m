@@ -20,7 +20,7 @@ if(size(A,2) ~= size(B,2))
     dist = [];
     return;
 end
-dH = max(compute_dist(A, B), compute_dist(B, A))
+dH = max(compute_dist(A, B), compute_dist(B, A));
 
 
 %% Compute distance

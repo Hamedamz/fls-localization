@@ -1,4 +1,4 @@
-classdef FLSExplorerDistAngle < FLSExplorer
+classdef FLSExplorerDistAngleOld < FLSExplorer
     methods
         function init(obj, fls)
             obj.wayPoints = [];
@@ -26,13 +26,34 @@ classdef FLSExplorerDistAngle < FLSExplorer
 %             rp = rp(1);
 %             N = fls.gtlNeighbors(rp);
 
-            [phi, theta] = getVectorAngleX(N.el, fls.el);
+            A = getVectorAngleX(fls.gtl, N.gtl);
+            alpha = getVectorAngleX(fls.el, N.el);
 
+            D = norm(fls.gtl - N.gtl);
             d = norm(fls.el - N.el);
-            D = fls.gtl - N.gtl;
-            dv = [d * cos(phi); d * sin(phi)];
 
-            V = D - dv;
+
+            a = abs(alpha - A);
+            v = sqrt(d^2 + D^2 - 2*d*D*cos(a));
+
+            if v == 0
+                return;
+            end
+            
+            if D < d
+                beta = asin(D*sin(a)/v);
+            else
+                gama = asin(d*sin(a)/v);
+                beta = pi - gama - a;
+            end
+
+            if alpha > A
+                theta = alpha + beta;
+            else
+                theta = alpha - beta;
+            end
+
+            V = [v*cos(theta); v*sin(theta)];
             R = fls.el + V;
 
             scatter(N.el(1), N.el(2), 'filled', 'blue')
