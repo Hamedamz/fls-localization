@@ -31,8 +31,19 @@ circle = [
     1 0 0 1 2 2 2
     ] + 6;
 
+cube = [
+    0 0 1 1 0 0 1 1;
+    0 1 1 0 0 1 1 0;
+    0 0 0 0 1 1 1 1
+    ] + 10;
 
-shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", "square2x2"}, 1).getUserInput();
+cube3 = [
+    0 0 0 1 1 2 2 2 1 0 0 0 1 2 2 2 1 0 0 0 1 2 2 2 1 1;
+    0 1 2 1 2 2 1 0 0 0 1 2 2 2 1 0 0 0 1 2 2 2 1 0 0 1;
+    0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2
+    ] + 10;
+
+shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", "square2x2", "cube", "cube3", "race car"}, 1).getUserInput();
 
 switch shape
     case 1
@@ -45,6 +56,12 @@ switch shape
         p = square3;
     case 5
         p = square;
+    case 6
+        p = cube;
+    case 7
+        p = cube3;
+    case 8
+        p = readPtcld("./assets/pt1510.ptcld");
 end
 
 clf

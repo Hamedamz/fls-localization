@@ -30,7 +30,12 @@ classdef FLSExplorerDistAngle < FLSExplorer
 
             d = norm(fls.el - N.el);
             D = fls.gtl - N.gtl;
-            dv = [d * cos(phi); d * sin(phi)];
+
+            if fls.D == 3
+                dv = [d * sin(theta) * cos(phi); d * sin(theta) * sin(phi); d * cos(theta)];
+            else
+                dv = [d * cos(phi); d * sin(phi)];
+            end
 
             V = D - dv;
             R = fls.el + V;

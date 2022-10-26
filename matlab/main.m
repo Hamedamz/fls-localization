@@ -4,7 +4,7 @@ function flss = main(explorerType, confidenceType, weightType, distType, pointCl
 
 flss = FLS.empty(size(pointCloud, 2), 0);
 screen = containers.Map('KeyType','char','ValueType','any');
-dispatchers = {Dispatcher([0; 0])};
+dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
 
 
 explorerSet = {
@@ -45,6 +45,7 @@ for i = 1:size(pointCloud, 2)
 end
 
 
+grid on
 plotScreen([flss.gtl], 'blue', 1);
 
 plotScreen([flss.el], 'red', 2);
@@ -52,7 +53,9 @@ plotScreen([flss.el], 'red', 2);
 plotScreen([flss.el], 'red', 3);
 hold on
 
-for j=1:1000
+% return;
+
+for j=1:15000
 %     flag = 0;
 %     for i = 1:size(flss, 2)
 %         if flss(i).confidence ~= 1.0
@@ -76,10 +79,10 @@ for j=1:1000
         end
     end
 
-%     if all([flss.confidence] > .99) 
-%         disp("all confidences are 1")
-%         break;
-%     end
+    if all([flss.confidence] > .99) 
+        disp("all confidences are 1")
+        break;
+    end
 
 %     dH = hausdorff([flss.gtl], [flss.el]);
 %     if dH < .4

@@ -5,7 +5,7 @@ classdef FLS < handle
         gtl
 
         r
-        alpha = 3 / 180 * pi
+        alpha = 1 / 180 * pi
         speed = 1
         communicationRange = 2.5
         distanceTraveled = 0
@@ -18,6 +18,7 @@ classdef FLS < handle
         screen
 
         freeze = 0
+        D
     end
 
     properties (Dependent)
@@ -42,16 +43,43 @@ classdef FLS < handle
             obj.distModel = distModel;
             obj.explorer = explorer;
             obj.screen = screen;
+            obj.D = size(gtl,1);
         end
 
         function flyTo(obj, coord)
             v = coord - obj.el;
             d = norm(v);
             obj.r = d * tan(obj.alpha);
-            theta = 2 * obj.alpha * rand(1) - obj.alpha;
+            
 
-            R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-            vR = R * v;
+            if obj.D == 3
+                i = [v(2); -v(1); 0];
+                j = [-v(3); 0; v(1)];
+                Ni = norm(i);
+                Nj = norm(j);
+
+                if Ni ~= 0
+                    i = i / norm(i);
+                end
+                if Nj ~= 0
+                    j = j / norm(j);
+                end
+                
+                phi = rand(1) * 2 * pi;
+                e = i * cos(phi) + j * sin(phi);
+                vR = v + e * rand(1) * obj.r;
+                NvR = norm(vR);
+
+                if NvR ~= 0
+                    vR = vR / norm(vR);
+                end
+                vR = vR * d;
+
+            else
+                theta = 2 * obj.alpha * rand(1) - obj.alpha;
+                R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+                vR = R * v;
+            end
 
             obj.distanceTraveled = obj.distanceTraveled + d;
             obj.el = vR;
@@ -80,15 +108,31 @@ classdef FLS < handle
             d = floor(obj.communicationRange);
             for i = -d:d
                 for j = -d:d
-                    if i == 0 && j == 0
-                        continue;
+
+                    if obj.D == 3
+                        for k = -d:d
+                            if i == 0 && j == 0 && k == 0
+                                continue;
+                            end
+        
+                            nId = coordToId(obj.gtl + [i; j; k]);
+                            
+                            if isKey(obj.screen, nId)
+                                N = [N obj.screen(nId)];
+                            end
+                        end
+                    else
+                        if i == 0 && j == 0
+                            continue;
+                        end
+    
+                        nId = coordToId(obj.gtl + [i; j]);
+                        
+                        if isKey(obj.screen, nId)
+                            N = [N obj.screen(nId)];
+                        end
                     end
 
-                    nId = coordToId(obj.gtl + [i; j]);
-                    
-                    if isKey(obj.screen, nId)
-                        N = [N obj.screen(nId)];
-                    end
                 end
             end
 
