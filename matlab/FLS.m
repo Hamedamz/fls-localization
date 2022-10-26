@@ -5,7 +5,7 @@ classdef FLS < handle
         gtl
 
         r
-        alpha = 1 / 180 * pi
+        alpha = 3 / 180 * pi
         speed = 1
         communicationRange = 2.5
         distanceTraveled = 0
@@ -90,16 +90,44 @@ classdef FLS < handle
         function out = get.elNeighbors(obj)
             N = [];
             flss = obj.screen.values();
-            for i = 1:size(obj.screen, 1)
-                if flss{i}.id == obj.id
-                    continue;
-                end
+            d = ceil(obj.communicationRange);
 
-                d = norm(flss{i}.el - obj.el);
-                if d <= obj.communicationRange
-                    N = [N flss{i}];
+            for i = -d:d
+                for j = -d:d
+
+                    if obj.D == 3
+                        for k = -d:d
+                            if i == 0 && j == 0 && k == 0
+                                continue;
+                            end
+        
+                            nId = coordToId(obj.gtl + [i; j; k]);
+                            
+                            if isKey(obj.screen, nId)
+                                d = norm(flss(nId).el - obj.el);
+                                if d <= obj.communicationRange
+                                    N = [N flss(nId)];
+                                end
+                            end
+                        end
+                    else
+                        if i == 0 && j == 0
+                            continue;
+                        end
+    
+                        nId = coordToId(obj.gtl + [i; j]);
+                        
+                        if isKey(obj.screen, nId)
+                            d = norm(flss(nId).el - obj.el);
+                            if d <= obj.communicationRange
+                                N = [N flss(nId)];
+                            end
+                        end
+                    end
+
                 end
             end
+
             out = N;
         end
 

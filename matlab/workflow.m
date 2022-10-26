@@ -61,7 +61,7 @@ switch shape
     case 7
         p = cube3;
     case 8
-        p = readPtcld("./assets/pt1510.ptcld");
+        p = readPtcld("./assets/pt1510.ptcld", 1000);
 end
 
 clf

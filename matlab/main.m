@@ -55,7 +55,7 @@ hold on
 
 % return;
 
-for j=1:15000
+for j=1:200
 %     flag = 0;
 %     for i = 1:size(flss, 2)
 %         if flss(i).confidence ~= 1.0
@@ -79,10 +79,10 @@ for j=1:15000
         end
     end
 
-    if all([flss.confidence] > .99) 
-        disp("all confidences are 1")
-        break;
-    end
+%     if all([flss.confidence] > .99) 
+%         disp("all confidences are 1")
+%         break;
+%     end
 
 %     dH = hausdorff([flss.gtl], [flss.el]);
 %     if dH < .4
