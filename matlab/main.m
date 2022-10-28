@@ -12,6 +12,7 @@ explorerSet = {
     FLSExplorerTrilateration()
     FLSExplorerTriangulation()
     FLSExplorerDistAngle()
+    FLSExplorerDistAngleAvg()
     FLSExplorerLoGlo()
     FLSExplorerBasic(0.3)};
 
@@ -55,7 +56,7 @@ hold on
 
 % return;
 
-for j=1:200
+for j=1:1000
 %     flag = 0;
 %     for i = 1:size(flss, 2)
 %         if flss(i).confidence ~= 1.0

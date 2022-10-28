@@ -1,6 +1,7 @@
 classdef FLSExplorer < handle
     properties
         wayPoints = []
+        eWayPoints = []
         scores = []
         bestIndex = 0
         bestScore = 0

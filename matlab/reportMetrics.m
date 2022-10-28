@@ -5,12 +5,12 @@ sum = 0;
 cmin = Inf;
 cmax = 0;
 csum = 0;
-count = 0;
 totalTraveled = 0;
 numFLSMoved = 0;
 maxTime = 0;
 
 for i = 1:size(flss, 2)
+    d = 0;
     for j = 1:size(flss, 2)
         if i == j 
             continue;
@@ -19,18 +19,17 @@ for i = 1:size(flss, 2)
         gtd = norm(flss(i).gtl - flss(j).gtl);
         ed = norm(flss(i).el - flss(j).el);
 
-        d = abs(ed - gtd);
-        sum = sum + d;
-        count = count + 1;
+        d = d + abs(ed - gtd);
+    end
 
-        if d < min
-            min = d;
-        end
-        
-        if d > max
-            max = d;
-        end
+    sum = sum + d;
 
+    if d < min
+        min = d;
+    end
+    
+    if d > max
+        max = d;
     end
 
     tm = (flss(i).distanceTraveled + flss(i).distanceExplored) / flss(i).speed;
@@ -56,7 +55,7 @@ for i = 1:size(flss, 2)
     end
 end
 
-avg = sum / count;
+avg = sum / i;
 cavg = csum / i;
 
 dH = hausdorff([flss.gtl], [flss.el]);

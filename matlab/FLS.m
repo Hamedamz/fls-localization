@@ -46,7 +46,7 @@ classdef FLS < handle
             obj.D = size(gtl,1);
         end
 
-        function flyTo(obj, coord)
+        function out = flyTo(obj, coord)
             v = coord - obj.el;
             d = norm(v);
             obj.r = d * tan(obj.alpha);
@@ -54,7 +54,8 @@ classdef FLS < handle
 
             if obj.D == 3
                 i = [v(2); -v(1); 0];
-                j = [-v(3); 0; v(1)];
+                j = cross(v, i);
+                
                 Ni = norm(i);
                 Nj = norm(j);
 
@@ -64,14 +65,14 @@ classdef FLS < handle
                 if Nj ~= 0
                     j = j / norm(j);
                 end
-                
+
                 phi = rand(1) * 2 * pi;
                 e = i * cos(phi) + j * sin(phi);
                 vR = v + e * rand(1) * obj.r;
                 NvR = norm(vR);
 
                 if NvR ~= 0
-                    vR = vR / norm(vR);
+                    vR = vR / NvR;
                 end
                 vR = vR * d;
 
@@ -82,7 +83,8 @@ classdef FLS < handle
             end
 
             obj.distanceTraveled = obj.distanceTraveled + d;
-            obj.el = vR;
+            obj.el = obj.el + vR;
+            out = obj.el;
         end
 
 
@@ -90,43 +92,52 @@ classdef FLS < handle
         function out = get.elNeighbors(obj)
             N = [];
             flss = obj.screen.values();
-            d = ceil(obj.communicationRange);
 
-            for i = -d:d
-                for j = -d:d
-
-                    if obj.D == 3
-                        for k = -d:d
-                            if i == 0 && j == 0 && k == 0
-                                continue;
-                            end
-        
-                            nId = coordToId(obj.gtl + [i; j; k]);
-                            
-                            if isKey(obj.screen, nId)
-                                d = norm(flss(nId).el - obj.el);
-                                if d <= obj.communicationRange
-                                    N = [N flss(nId)];
-                                end
-                            end
-                        end
-                    else
-                        if i == 0 && j == 0
-                            continue;
-                        end
-    
-                        nId = coordToId(obj.gtl + [i; j]);
-                        
-                        if isKey(obj.screen, nId)
-                            d = norm(flss(nId).el - obj.el);
-                            if d <= obj.communicationRange
-                                N = [N flss(nId)];
-                            end
-                        end
-                    end
-
+            for i = 1:size(flss,2)
+                if (flss{i}.id == obj.id)
+                    continue;
+                end
+                d = obj.distModel.getDistance(obj, flss{i});
+                if d <= obj.communicationRange
+                    N = [N flss{i}];
                 end
             end
+
+%             for i = -d:d
+%                 for j = -d:d
+% 
+%                     if obj.D == 3
+%                         for k = -d:d
+%                             if i == 0 && j == 0 && k == 0
+%                                 continue;
+%                             end
+%         
+%                             nId = coordToId(obj.gtl + [i; j; k]);
+%                             
+%                             if isKey(obj.screen, nId)
+%                                 d = norm(obj.screen(nId).el - obj.el);
+%                                 if d <= obj.communicationRange
+%                                     N = [N obj.screen(nId)];
+%                                 end
+%                             end
+%                         end
+%                     else
+%                         if i == 0 && j == 0
+%                             continue;
+%                         end
+%     
+%                         nId = coordToId(obj.gtl + [i; j]);
+%                         
+%                         if isKey(obj.screen, nId)
+%                             d = norm(obj.screen(nId).el - obj.el);
+%                             if d <= obj.communicationRange
+%                                 N = [N obj.screen(nId)];
+%                             end
+%                         end
+%                     end
+% 
+%                 end
+%             end
 
             out = N;
         end

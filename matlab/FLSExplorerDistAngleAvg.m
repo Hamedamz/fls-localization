@@ -1,4 +1,4 @@
-classdef FLSExplorerDistAngle < FLSExplorer
+classdef FLSExplorerDistAngleAvg < FLSExplorer
     methods
         function init(obj, fls)
             obj.wayPoints = [];
@@ -15,38 +15,29 @@ classdef FLSExplorerDistAngle < FLSExplorer
                 return;
             end
 
-            maxConf = -inf;
+            obj.wayPoints(:,1) = zeros(size(fls.el));
             for i = 1:n
-                conf = fls.elNeighbors(i).confidence;
-                if conf > maxConf
-                    maxConf = conf;
-                    N = fls.elNeighbors(i);
+                N = fls.elNeighbors(i);
+                [phi, theta] = getVectorAngleX(N.el, fls.el);
+
+                d = fls.distModel.getDistance(fls, N);
+                D = fls.gtl - N.gtl;
+    
+                if fls.D == 3
+                    dv = [d * sin(theta) * cos(phi); d * sin(theta) * sin(phi); d * cos(theta)];
+                else
+                    dv = [d * cos(phi); d * sin(phi)];
                 end
+    
+                V = D - dv;
+                R = fls.el + V;
+    
+                scatter(N.el(1), N.el(2), 'filled', 'blue')
+                scatter(fls.el(1), fls.el(2), 'filled', 'green')
+    
+                obj.wayPoints(:,1) = obj.wayPoints(:,1) + R;
             end
-
-%             rp = randperm(n);
-%             rp = rp(1);
-%             N = fls.gtlNeighbors(rp);
-
-            [phi, theta] = getVectorAngleX(N.el, fls.el);
-
-            d = fls.distModel.getDistance(fls, N);
-            D = fls.gtl - N.gtl;
-
-            if fls.D == 3
-                dv = [d * sin(theta) * cos(phi); d * sin(theta) * sin(phi); d * cos(theta)];
-            else
-                dv = [d * cos(phi); d * sin(phi)];
-            end
-
-            V = D - dv;
-            R = fls.el + V;
-
-            scatter(N.el(1), N.el(2), 'filled', 'blue')
-            scatter(fls.el(1), fls.el(2), 'filled', 'green')
-
-            obj.wayPoints(:,1) = R;
-                
+            obj.wayPoints(:,1) = obj.wayPoints(:,1) / n;
         end
 
         function d = step(obj, fls)

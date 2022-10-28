@@ -44,7 +44,7 @@ classdef FLSExplorerLoGlo < FLSExplorer
                 rectangle('Position',[ca.' - [ra ra] 2*[ra ra]],'Curvature',[1 1]);
                 rectangle('Position',[cb.' - [rb rb] 2*[rb rb]],'Curvature',[1 1]);
     
-                obj.wayPoints(:,1) = R;
+                obj.wayPoints(:,2) = R;
             else
                 fprintf("FLS %s faild to solve global triangulation\n", fls.id);
                 return;
