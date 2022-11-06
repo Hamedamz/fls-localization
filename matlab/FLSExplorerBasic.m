@@ -4,8 +4,8 @@ classdef FLSExplorerBasic < FLSExplorer
     end
     
     methods
-        function obj = FLSExplorerBasic(r)
-            obj.r = r;
+        function obj = FLSExplorerBasic()
+            obj.r = 0.3;
         end
         
         function init(obj, fls)

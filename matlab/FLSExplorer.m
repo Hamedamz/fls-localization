@@ -1,11 +1,11 @@
 classdef FLSExplorer < handle
     properties
         wayPoints = []
-        eWayPoints = []
         scores = []
+        neighbor = 0
         bestIndex = 0
-        bestScore = 0
         i = 0
+        freezePolicy
     end
 
     properties (Dependent)
@@ -14,11 +14,45 @@ classdef FLSExplorer < handle
     
     methods (Abstract)
         init(obj, fls)
-        step(obj, fls)
-        finalize(obj)
     end
 
     methods
+        function step(obj)
+            obj.i = obj.i + 1;
+            obj.bestIndex = obj.i;
+        end
+
+        function finalize(obj, fls)
+            k = obj.bestIndex;
+
+            if k > size(obj.wayPoints, 2) || k < 1
+                fls.freeze = 1;
+                return;
+            end
+
+            dest = obj.wayPoints(:,k);
+            
+            d = norm(dest - fls.el);
+            
+            if d < 0.1
+                if obj.freezePolicy == 3 || obj.freezePolicy == 2
+                    fls.freeze = 1;
+                end
+                return;
+            end
+            
+            fls.flyTo(dest);
+
+            if obj.neighbor ~= 0
+                fls.swarm.addMember(obj.neighbor);
+                obj.neighbor.swarm.addMember(fls);
+            end
+
+            if obj.freezePolicy == 2
+                fls.freeze = 1;
+            end
+        end
+
         function out = get.isFinished(obj)
             out = obj.i >= size(obj.wayPoints, 2) && obj.i;
         end

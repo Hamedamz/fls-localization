@@ -1,12 +1,15 @@
 classdef FLSExplorerDistAngle < FLSExplorer
     methods
+        function obj = FLSExplorerDistAngle(freezePolicy)
+            obj.freezePolicy = freezePolicy;
+        end
+
         function init(obj, fls)
             obj.wayPoints = [];
-            obj.eWayPoints = [];
+            obj.neighbor = 0;
             obj.scores = [];
 
             obj.i = 0;
-            obj.bestScore = -Inf;
             obj.bestIndex = 0;
 
             n = size(fls.elNeighbors, 2);
@@ -15,14 +18,7 @@ classdef FLSExplorerDistAngle < FLSExplorer
                 return;
             end
 
-            maxConf = -inf;
-            for i = 1:n
-                conf = fls.elNeighbors(i).confidence;
-                if conf > maxConf
-                    maxConf = conf;
-                    N = fls.elNeighbors(i);
-                end
-            end
+            N = getMostConfident(fls.elNeighbors);
 
 %             rp = randperm(n);
 %             rp = rp(1);
@@ -40,51 +36,14 @@ classdef FLSExplorerDistAngle < FLSExplorer
             end
 
             V = D - dv;
-            R = fls.el + V;
+            P = fls.el + V;
 
             scatter(N.el(1), N.el(2), 'filled', 'blue')
             scatter(fls.el(1), fls.el(2), 'filled', 'green')
+            scatter(P(1), P(2), 'green')
 
-            obj.wayPoints(:,1) = R;
-                
-        end
-
-        function d = step(obj, fls)
-            obj.i = obj.i + 1;
-
-            if obj.i > size(obj.wayPoints, 2)
-                fls.freeze = 1;
-                d = 0;
-                return;
-            end
-            
-            d = norm(obj.wayPoints(:,obj.i) - fls.el);
-
-            if d == 0
-                fls.freeze = 1;
-                d = 0;
-                return;
-            end
-
-            el = fls.flyTo(obj.wayPoints(:,obj.i));
-            obj.eWayPoints(:,obj.i) = el;
-            newScore = fls.weight;
-            obj.scores(obj.i) = newScore;
-            scatter(el(1), el(2), 'green')
-
-            
-            if newScore > obj.bestScore
-                obj.bestScore = newScore;
-                obj.bestIndex = obj.i;
-            end
-        end
-
-        function bestCoord = finalize(obj)
-            if obj.bestIndex > 0
-                bestCoord = obj.eWayPoints(:,obj.bestIndex);
-            else
-                bestCoord = nan;
-            end
+            obj.wayPoints(:,1) = P;
+            obj.neighbor = N;
         end
     end
 end

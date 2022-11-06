@@ -32,15 +32,15 @@ for i = 1:size(flss, 2)
         max = d;
     end
 
-    tm = (flss(i).distanceTraveled + flss(i).distanceExplored) / flss(i).speed;
+    tm = flss(i).distanceTraveled / flss(i).speed;
 
     if tm > maxTime
         maxTime = tm;
     end
 
-    if flss(i).distanceExplored > 0
+    if flss(i).distanceTraveled > 0
         numFLSMoved = numFLSMoved + 1;
-        totalTraveled = totalTraveled + flss(i).distanceExplored;
+        totalTraveled = totalTraveled + flss(i).distanceTraveled;
     end
 
     conf = flss(i).confidence;
@@ -60,6 +60,6 @@ cavg = csum / i;
 
 dH = hausdorff([flss.gtl], [flss.el]);
 
-fprintf('Hausdorff Distance: %f\nDifference between EL and GTL:\nmin: %f\nmax: %f\navg: %f\nConfidence:\nmin: %f\nmax: %f\navg: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', dH, min, max, avg, cmin, cmax, cavg, totalTraveled, numFLSMoved, maxTime);
+fprintf('\nHausdorff Distance: %f\nDifference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', dH, min, avg, max, cmin, cavg, cmax, totalTraveled, numFLSMoved, maxTime);
 end
 

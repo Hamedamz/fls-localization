@@ -1,11 +1,15 @@
 classdef FLSExplorerTrilateration < FLSExplorer
     methods
+        function obj = FLSExplorerTrilateration(freezePolicy)
+            obj.freezePolicy = freezePolicy;
+        end
+
         function init(obj, fls)
             obj.wayPoints = [];
+            obj.neighbor = 0;
             obj.scores = [];
 
             obj.i = 0;
-            obj.bestScore = -Inf;
             obj.bestIndex = 0;
 
             i = randperm(size(fls.gtlNeighbors, 2));
@@ -45,28 +49,6 @@ classdef FLSExplorerTrilateration < FLSExplorer
                     obj.wayPoints(:,1) = out2;
                 end
             end
-        end
-
-        function d = step(obj, fls)
-            obj.i = obj.i + 1;
-            d = norm(obj.wayPoints(:,obj.i) - fls.el);
-            fls.el = obj.wayPoints(:,obj.i);
-            newScore = fls.weight;
-            obj.scores(obj.i) = newScore;
-            %sprintf('weight: %f', fls.weight)
-            %sprintf('point: %f %f', fls.el)
-
-            
-            if newScore > obj.bestScore
-                %disp(obj.i)
-                obj.bestScore = newScore;
-                obj.bestIndex = obj.i;
-            end
-        end
-
-        function bestCoord = finalize(obj)
-            bestCoord = obj.wayPoints(:,obj.bestIndex);
-            %disp(bestCoord);
         end
     end
 end

@@ -1,12 +1,15 @@
 classdef FLSExplorerDistAngleAvg < FLSExplorer
     methods
+        function obj = FLSExplorerDistAngleAvg(freezePolicy)
+            obj.freezePolicy = freezePolicy;
+        end
+
         function init(obj, fls)
             obj.wayPoints = [];
-            obj.eWayPoints = [];
+            obj.neighbor = 0;
             obj.scores = [];
 
             obj.i = 0;
-            obj.bestScore = -Inf;
             obj.bestIndex = 0;
 
             n = size(fls.elNeighbors, 2);
@@ -38,44 +41,6 @@ classdef FLSExplorerDistAngleAvg < FLSExplorer
                 obj.wayPoints(:,1) = obj.wayPoints(:,1) + R;
             end
             obj.wayPoints(:,1) = obj.wayPoints(:,1) / n;
-        end
-
-        function d = step(obj, fls)
-            obj.i = obj.i + 1;
-
-            if obj.i > size(obj.wayPoints, 2)
-                fls.freeze = 1;
-                d = 0;
-                return;
-            end
-            
-            d = norm(obj.wayPoints(:,obj.i) - fls.el);
-
-            if d == 0
-                fls.freeze = 1;
-                d = 0;
-                return;
-            end
-
-            el = fls.flyTo(obj.wayPoints(:,obj.i));
-            obj.eWayPoints(:,obj.i) = el;
-            newScore = fls.weight;
-            obj.scores(obj.i) = newScore;
-            scatter(el(1), el(2), 'green')
-
-            
-            if newScore > obj.bestScore
-                obj.bestScore = newScore;
-                obj.bestIndex = obj.i;
-            end
-        end
-
-        function bestCoord = finalize(obj)
-            if obj.bestIndex > 0
-                bestCoord = obj.eWayPoints(:,obj.bestIndex);
-            else
-                bestCoord = nan;
-            end
         end
     end
 end

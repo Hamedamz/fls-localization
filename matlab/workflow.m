@@ -5,11 +5,24 @@ seed = 1;
 rng(seed);
 
 
-clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
-explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration", "Hybrid", "DistAngle", "DistAngleAvg", "LoGlo"}, 1).getUserInput();
 confidenceType = 'distNormalizedGTL';
 weightType = 'distNormalizedGTL';
-distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
+clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
+explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration", "Hybrid", "DistAngle", "DistAngleAvg", "LoGlo"}, 4).getUserInput();
+% distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
+distType = 1;
+addAngleError = -Prompt("Add error to angle estimation?", {"Yes", "No"}, 1).getUserInput() + 2;
+freezePolicy = Prompt("When to freeze an FLS?", {"Don't freeze", "After each movement", "When it wants to move with a zero vector"}, 1).getUserInput();
+swarmEnabled = -Prompt("Enable swarm?", {"Yes", "No"}, 1).getUserInput() + 2;
+if swarmEnabled
+    swarmPolicy = Prompt("How should a swarm move?", {"Only one FLS in a swarm may move in a round", "Each swarm member moves using the first recieved vector"}, 1).getUserInput();
+else
+    swarmPolicy = 0;
+end
+
+alpha = 3;
+
+save('config.mat','addAngleError', 'swarmPolicy');
 
 square = [
     0 0 1 1;
@@ -65,4 +78,4 @@ switch shape
 end
 
 clf
-flss = main(explorerType, confidenceType, weightType, distType, p, clear);
+flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear);

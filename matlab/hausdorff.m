@@ -15,6 +15,33 @@
 function [dH] = hausdorff( A, B)
 A = A.';
 B = B.';
+
+alpha = min(90,size(A,1));
+
+rp = randperm(size(A,1));
+Aa = A(rp(1:alpha), :);
+Ba = B(rp(1:alpha), :);
+Da = Ba - Aa;
+
+%disp(Aa);
+
+minv = Inf;
+mini = 0;
+
+for i = 1:alpha
+    Bb = Aa + Da(i, :);
+    sum = 0;
+    for j = 1:alpha
+        sum = sum + norm(Bb(j, :) - Ba(j, :));
+    end
+    if sum < minv
+        minv = sum;
+        mini = i;
+    end
+end
+
+A = A + Da(mini, :);
+
 if(size(A,2) ~= size(B,2))
     fprintf( 'WARNING: dimensionality must be the same\n' );
     dist = [];

@@ -1,11 +1,15 @@
 classdef FLSExplorerTriangulation < FLSExplorer
     methods
+        function obj = FLSExplorerTriangulation(freezePolicy)
+            obj.freezePolicy = freezePolicy;
+        end
+
         function init(obj, fls)
             obj.wayPoints = [];
+            obj.neighbor = 0;
             obj.scores = [];
 
             obj.i = 0;
-            obj.bestScore = -Inf;
             obj.bestIndex = 0;
 
             if size(fls.gtlNeighbors, 2) < 3
@@ -98,41 +102,6 @@ classdef FLSExplorerTriangulation < FLSExplorer
 
             obj.wayPoints(:,1) = R;
                 
-        end
-
-        function d = step(obj, fls)
-            obj.i = obj.i + 1;
-
-            if obj.i > size(obj.wayPoints, 2)
-                fls.freeze = 1;
-                d = 0;
-                return;
-            end
-            
-            d = norm(obj.wayPoints(:,obj.i) - fls.el);
-
-            if d > fls.r*2 || d == 0
-                fls.freeze = 1;
-                d = 0;
-                return;
-            end
-
-            fls.el = obj.wayPoints(:,obj.i);
-            newScore = fls.weight;
-            obj.scores(obj.i) = newScore;
-            
-            if newScore > obj.bestScore
-                obj.bestScore = newScore;
-                obj.bestIndex = obj.i;
-            end
-        end
-
-        function bestCoord = finalize(obj)
-            if obj.bestIndex > 0
-                bestCoord = obj.wayPoints(:,obj.bestIndex);
-            else
-                bestCoord = nan;
-            end
         end
     end
 end

@@ -9,15 +9,17 @@ classdef FLS < handle
         speed = 1
         communicationRange = 2.5
         distanceTraveled = 0
-        distanceExplored = 0
+        lastD = 0
 
         confidenceModel
         weightModel
         distModel
         explorer
+        swarm
         screen
 
         freeze = 0
+        locked = 0
         D
     end
 
@@ -34,7 +36,7 @@ classdef FLS < handle
     end
 
     methods
-        function obj = FLS(el, gtl, weightModel, confidenceModel, distModel, explorer, screen)
+        function obj = FLS(el, gtl, alpha, weightModel, confidenceModel, distModel, explorer, swarm, screen)
             obj.id = coordToId(gtl);
             obj.el = el;
             obj.gtl = gtl;
@@ -44,47 +46,60 @@ classdef FLS < handle
             obj.explorer = explorer;
             obj.screen = screen;
             obj.D = size(gtl,1);
+            obj.swarm = swarm;
+            obj.alpha = alpha / 180 * pi;
         end
 
-        function out = flyTo(obj, coord)
-            v = coord - obj.el;
+        function ve = addErrorToVector(obj, v)
             d = norm(v);
             obj.r = d * tan(obj.alpha);
             
-
             if obj.D == 3
                 i = [v(2); -v(1); 0];
                 j = cross(v, i);
                 
-                Ni = norm(i);
-                Nj = norm(j);
+                ni = norm(i);
+                nj = norm(j);
 
-                if Ni ~= 0
+                if ni ~= 0
                     i = i / norm(i);
                 end
-                if Nj ~= 0
+                if nj ~= 0
                     j = j / norm(j);
                 end
 
                 phi = rand(1) * 2 * pi;
                 e = i * cos(phi) + j * sin(phi);
-                vR = v + e * rand(1) * obj.r;
-                NvR = norm(vR);
+                ve = v + e * rand(1) * obj.r;
+                nve = norm(ve);
 
-                if NvR ~= 0
-                    vR = vR / NvR;
+                if nve ~= 0
+                    ve = ve / nve;
                 end
-                vR = vR * d;
+                ve = ve * d;
 
             else
                 theta = 2 * obj.alpha * rand(1) - obj.alpha;
                 R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-                vR = R * v;
+                ve = R * v;
+            end
+        end
+
+        function flyTo(obj, coord)
+            if obj.locked 
+                obj.lastD = 0;
+                return;
             end
 
+            v = coord - obj.el;
+            ve = obj.addErrorToVector(v);
+            d = norm(ve);
+            
             obj.distanceTraveled = obj.distanceTraveled + d;
-            obj.el = obj.el + vR;
-            out = obj.el;
+            obj.el = obj.el + ve;
+            obj.lastD = d;
+
+            obj.swarm.follow(obj, v);
         end
 
 
@@ -190,21 +205,11 @@ classdef FLS < handle
         end
 
         function exploreOneStep(obj)
-            d = obj.explorer.step(obj);
-            obj.distanceExplored = obj.distanceExplored + d;
+            obj.explorer.step();
         end
 
-        function m = finalizeExploration(obj)
-            bestCoord = obj.explorer.finalize();
-            if isnan(bestCoord)
-                m = 0;
-                return;
-            end
-            d = norm(bestCoord - obj.el);
-            obj.distanceExplored = obj.distanceExplored + d;
-            obj.el = bestCoord;
-            obj.freeze = 1;
-            m = 1;
+        function finalizeExploration(obj)
+            obj.explorer.finalize(obj);
         end
 
 
@@ -219,7 +224,7 @@ classdef FLS < handle
 
         function out = get.confidence(obj)
             if obj.freeze
-                out = 1.0;
+                out = 1;
             else
                 out = obj.confidenceModel.getRating(obj);
             end
