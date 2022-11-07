@@ -4,7 +4,7 @@ classdef FLSExplorerDistAngle < FLSExplorer
             obj.freezePolicy = freezePolicy;
         end
 
-        function init(obj, fls)
+        function success = init(obj, fls)
             obj.wayPoints = [];
             obj.neighbor = 0;
             obj.scores = [];
@@ -14,7 +14,8 @@ classdef FLSExplorerDistAngle < FLSExplorer
 
             n = size(fls.elNeighbors, 2);
             if n < 1
-                fprintf("FLS %s has no neighbors\n", fls.id);
+                fprintf("ERROR distangle failed %s: no neighbors\n", fls.id);
+                success = 0;
                 return;
             end
 
@@ -44,6 +45,7 @@ classdef FLSExplorerDistAngle < FLSExplorer
 
             obj.wayPoints(:,1) = P;
             obj.neighbor = N;
+            success = 1;
         end
     end
 end

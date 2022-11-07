@@ -4,7 +4,7 @@ classdef FLSExplorerDistAngleAvg < FLSExplorer
             obj.freezePolicy = freezePolicy;
         end
 
-        function init(obj, fls)
+        function success = init(obj, fls)
             obj.wayPoints = [];
             obj.neighbor = 0;
             obj.scores = [];
@@ -15,6 +15,7 @@ classdef FLSExplorerDistAngleAvg < FLSExplorer
             n = size(fls.elNeighbors, 2);
             if n < 1
                 fprintf("FLS %s has no neighbors\n", fls.id);
+                success = 0;
                 return;
             end
 
@@ -41,6 +42,7 @@ classdef FLSExplorerDistAngleAvg < FLSExplorer
                 obj.wayPoints(:,1) = obj.wayPoints(:,1) + R;
             end
             obj.wayPoints(:,1) = obj.wayPoints(:,1) / n;
+            success = 1;
         end
     end
 end

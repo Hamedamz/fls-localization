@@ -4,7 +4,7 @@ classdef FLSExplorerTriangulation < FLSExplorer
             obj.freezePolicy = freezePolicy;
         end
 
-        function init(obj, fls)
+        function success = init(obj, fls)
             obj.wayPoints = [];
             obj.neighbor = 0;
             obj.scores = [];
@@ -13,7 +13,8 @@ classdef FLSExplorerTriangulation < FLSExplorer
             obj.bestIndex = 0;
 
             if size(fls.gtlNeighbors, 2) < 3
-                fprintf("FLS %s has less that 3 neighbors\n", fls.id);
+                fprintf("ERROR triangulation failed %s: less that 3 neighbors\n", fls.id);
+                success = 0;
                 return;
             end
 
@@ -54,7 +55,8 @@ classdef FLSExplorerTriangulation < FLSExplorer
             end
 
             if ~orderFound
-                fprintf("FLS %s faild to triangulate\n", fls.id);
+                fprintf("ERROR triangulation failed %s: can not find the proper order\n", fls.id);
+                success = 0;
                 return;
             end
 
@@ -79,6 +81,11 @@ classdef FLSExplorerTriangulation < FLSExplorer
             cb = [p23(1) - lb * v23(2); p23(2) + lb * v23(1)];
 
             % return error if the centers of the two circles are too close
+            if norm(ca - cb) < 1
+                fprintf("ERROR triangulation failed %s: centers are too close\n", fls.id);
+                success = 0;
+                return;
+            end
 
             cba = (ca - cb) / norm(ca - cb);
             gamma = acos(dot(n2 - cb, cba) / rb);
@@ -101,7 +108,7 @@ classdef FLSExplorerTriangulation < FLSExplorer
             rectangle('Position',[cb.' - [rb rb] 2*[rb rb]],'Curvature',[1 1]);
 
             obj.wayPoints(:,1) = R;
-                
+            success = 1;
         end
     end
 end

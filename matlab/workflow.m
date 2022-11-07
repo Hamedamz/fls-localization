@@ -20,7 +20,10 @@ else
     swarmPolicy = 0;
 end
 
-alpha = 3;
+alpha = 2;
+
+% rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
+rounds = 10;
 
 save('config.mat','addAngleError', 'swarmPolicy');
 
@@ -78,4 +81,4 @@ switch shape
 end
 
 clf
-flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear);
+flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds);

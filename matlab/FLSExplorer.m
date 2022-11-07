@@ -22,11 +22,12 @@ classdef FLSExplorer < handle
             obj.bestIndex = obj.i;
         end
 
-        function finalize(obj, fls)
+        function success = finalize(obj, fls)
             k = obj.bestIndex;
 
             if k > size(obj.wayPoints, 2) || k < 1
                 fls.freeze = 1;
+                success = 0;
                 return;
             end
 
@@ -38,6 +39,7 @@ classdef FLSExplorer < handle
                 if obj.freezePolicy == 3 || obj.freezePolicy == 2
                     fls.freeze = 1;
                 end
+                success = 0;
                 return;
             end
             
@@ -51,6 +53,8 @@ classdef FLSExplorer < handle
             if obj.freezePolicy == 2
                 fls.freeze = 1;
             end
+
+            success = 1;
         end
 
         function out = get.isFinished(obj)

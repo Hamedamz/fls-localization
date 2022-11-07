@@ -1,4 +1,4 @@
-function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear)
+function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds)
 
 
 
@@ -62,8 +62,7 @@ plotScreen([flss.el], 'red', 2);
 % return;
 figure(3);
 
-rounds = 100;
-pltResults = zeros(6, rounds);
+pltResults = zeros(12, rounds);
 
 for j=1:rounds
     terminate = 0;
@@ -95,6 +94,8 @@ for j=1:rounds
 
 
     candidateExplorers = selectCandidateExplorers(flss);
+    numCandidate = size(candidateExplorers, 2);
+    fprintf('  %d FLS(s) are less than 95 percent confident\n', numCandidate);
 
     if size(candidateExplorers, 2) < 1
         disp('  no FLSs is selected to move')
@@ -111,37 +112,34 @@ for j=1:rounds
     end
 
     concurrentExplorers = selectConcurrentExplorers(candidateExplorers);
+    numConcurrent = size(concurrentExplorers, 2);
+    fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
 
+    calSuccess = 0;
     for i = 1:size(concurrentExplorers, 2)
-        concurrentExplorers(i).initializeExplorer();
+        calSuccess = calSuccess + concurrentExplorers(i).initializeExplorer();
     end
+    
+    calFail = numConcurrent - calSuccess;
+    fprintf('  %d FLS(s) failed to compute v\n', calFail);
+    fprintf('  %d FLS(s) computed v\n', calSuccess);
 
     while size(concurrentExplorers, 2)
         itemsToRemove = [];
 
         for i = 1:size(concurrentExplorers, 2)
             fls = concurrentExplorers(i);
-
-%             if fls.explorer.isFinished
-%                 m = fls.finalizeExploration();
-%                 itemsToRemove = [itemsToRemove fls];
-%                 %fprintf('%d - fls %s with confidence %.2f finished exploring\n', j, fls.id, fls.confidence);
-% 
-%                 continue;
-%             end
-            
             fls.exploreOneStep();
             itemsToRemove = [itemsToRemove fls];
         end
 
-        fprintf('  %d FLS(s) computed v\n', size(itemsToRemove, 2));
-        %disp([itemsToRemove.id]);
-
-        
+        movSuccess = 0;
         for i = 1:size(itemsToRemove, 2)
             fls = itemsToRemove(i);
-            fls.finalizeExploration();
+            movSuccess = movSuccess + fls.finalizeExploration();
         end
+        fprintf('  %d FLS(s) have nonzero v\n', movSuccess);
+        movZero = calSuccess - movSuccess;
 
         concurrentExplorers = setdiff(concurrentExplorers, itemsToRemove);
 
@@ -175,6 +173,12 @@ for j=1:rounds
         pltResults(4,j) = maxD;
         pltResults(5,j) = hausdorff([flss.gtl], [flss.el]);
         pltResults(6,j) = sum([flss.confidence]) / size(flss,2);
+        pltResults(7,j) = numCandidate;
+        pltResults(8,j) = numConcurrent;
+        pltResults(9,j) = calSuccess;
+        pltResults(10,j) = calFail;
+        pltResults(11,j) = movSuccess;
+        pltResults(12,j) = movZero;
 
         fprintf('  %d FLS(s) moved\n', count);
         if count

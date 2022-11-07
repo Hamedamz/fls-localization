@@ -4,7 +4,7 @@ classdef FLSExplorerLoGlo < FLSExplorer
             obj.freezePolicy = freezePolicy;
         end
 
-        function init(obj, fls)
+        function s = init(obj, fls)
             obj.wayPoints = [];
             obj.neighbor = 0;
             obj.scores = [];
@@ -14,6 +14,7 @@ classdef FLSExplorerLoGlo < FLSExplorer
 
             if size(fls.gtlNeighbors, 2) < 3
                 fprintf("FLS %s has less that 3 neighbors\n", fls.id);
+                s = 0;
                 return;
             end
 
@@ -31,6 +32,7 @@ classdef FLSExplorerLoGlo < FLSExplorer
                 obj.wayPoints(:,1) = R;
             else
                 fprintf("FLS %s faild to solve local triangulation\n", fls.id);
+                s = 0;
                 return;
             end
 
@@ -49,11 +51,13 @@ classdef FLSExplorerLoGlo < FLSExplorer
                 rectangle('Position',[cb.' - [rb rb] 2*[rb rb]],'Curvature',[1 1]);
     
                 obj.wayPoints(:,2) = R;
+                s = 1;
             else
                 fprintf("FLS %s faild to solve global triangulation\n", fls.id);
+                s = 0;
                 return;
             end
-                
+              
         end
     end
 end

@@ -200,16 +200,16 @@ classdef FLS < handle
 
 
 
-        function initializeExplorer(obj)
-            obj.explorer.init(obj);
+        function success = initializeExplorer(obj)
+            success = obj.explorer.init(obj);
         end
 
         function exploreOneStep(obj)
             obj.explorer.step();
         end
 
-        function finalizeExploration(obj)
-            obj.explorer.finalize(obj);
+        function success = finalizeExploration(obj)
+            success = obj.explorer.finalize(obj);
         end
 
 
