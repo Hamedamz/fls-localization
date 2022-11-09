@@ -65,7 +65,7 @@ plotScreen([flss.el], 'red', 2);
 % return;
 figure(3);
 
-pltResults = zeros(12, rounds);
+pltResults = zeros(13, rounds);
 
 for j=1:rounds
     if clear
@@ -117,8 +117,14 @@ for j=1:rounds
     fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
 
     calSuccess = 0;
+    specificEr = 0;
     for i = 1:size(concurrentExplorers, 2)
-        calSuccess = calSuccess + concurrentExplorers(i).initializeExplorer();
+        s = concurrentExplorers(i).initializeExplorer();
+        if s > 0
+            calSuccess = calSuccess + s;
+        elseif s == -1
+            specificEr = specificEr + 1;
+        end
     end
     
     calFail = numConcurrent - calSuccess;
@@ -180,6 +186,7 @@ for j=1:rounds
         pltResults(10,j) = calFail;
         pltResults(11,j) = movSuccess;
         pltResults(12,j) = movZero;
+        pltResults(13,j) = specificEr;
 
         fprintf('  %d FLS(s) moved\n', count);
         if count

@@ -21,12 +21,12 @@ else
 end
 
 removeAlpha = 1;
-alpha = 1;
-angleError = 5;
+alpha = 3;
+angleError = 3;
 
 
 % rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
-rounds = 0;
+rounds = 100;
 
 save('config.mat','addAngleError', 'swarmPolicy', 'angleError');
 
