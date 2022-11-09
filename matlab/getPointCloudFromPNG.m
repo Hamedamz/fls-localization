@@ -4,11 +4,14 @@ function pointCloud = getPointCloudFromPNG(path)
 
 count = 0;
 
-for i = 1:size(transparency, 1)
-    for j = 1:size(transparency, 2)
+xres = size(transparency, 1);
+yres = size(transparency, 2);
+
+for i = 1:xres
+    for j = 1:yres
         if transparency(i, j) > 127
             count = count + 1;
-            pointCloud(:, count) = [i; j];
+            pointCloud(:, count) = [j + 3; xres - i + 3];
         end
     end
 end

@@ -5,9 +5,9 @@ classdef FLS < handle
         gtl
 
         r
-        alpha = 3 / 180 * pi
+        alpha
         speed = 1
-        communicationRange = 2.5
+        communicationRange = 2.85
         distanceTraveled = 0
         lastD = 0
 
@@ -51,6 +51,11 @@ classdef FLS < handle
         end
 
         function ve = addErrorToVector(obj, v)
+            if obj.alpha == 0
+                ve = v;
+                return;
+            end
+
             d = norm(v);
             obj.r = d * tan(obj.alpha);
             

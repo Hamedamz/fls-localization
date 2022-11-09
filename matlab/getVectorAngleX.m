@@ -1,10 +1,11 @@
 function [p, t] = getVectorAngleX(a, b)
-    maxE = 2 * pi / 180;
+    load('config.mat', 'addAngleError', 'angleError');
+
+    maxE = angleError * pi / 180;
 
     pe = 0;
     te = 0;
 
-    load('config.mat', 'addAngleError');
 
     if addAngleError
         pe = (2 * rand(1) - 1) * maxE;

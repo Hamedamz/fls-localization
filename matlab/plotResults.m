@@ -1,4 +1,4 @@
-function plotResults(A, B, fig, T)
+function plotResults(A, B, T, fig)
 figure(fig)
 
 % yFrozen = data(1,:);
@@ -12,9 +12,8 @@ x=1:size(A,2);
 
 extraInputs = {'interpreter','latex','fontsize',18};
 
-AxesH = axes('Xlim', [1,size(A,2)], 'XTick', 1:1:size(A,2), 'NextPlot', 'add');
+axes('Xlim', [1,size(A,2)], 'XTick', 1:10:size(A,2), 'NextPlot', 'add');
 
-%t = title('ICL, ICF, Simple Comparison');
 t=title(T);
 %xlabel('Point Cloud ID',extraInputs{:})
 %ylabel('Execution Time (Seconds)',extraInputs{:})
@@ -52,7 +51,6 @@ plot(x,B,'--mx','LineWidth', 2.5,'DisplayName','B')
 % hold on 
 % plot(x,yAvgDist,'--ko','LineWidth', 2.5,'DisplayName','AvgDist') 
 hold off
-
 
 
 end

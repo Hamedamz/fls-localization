@@ -81,7 +81,7 @@ classdef FLSExplorerTriangulation < FLSExplorer
             cb = [p23(1) - lb * v23(2); p23(2) + lb * v23(1)];
 
             % return error if the centers of the two circles are too close
-            if norm(ca - cb) < 1
+            if norm(ca - cb) < 3
                 fprintf("ERROR triangulation failed %s: centers are too close\n", fls.id);
                 success = 0;
                 return;

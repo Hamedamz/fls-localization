@@ -12,7 +12,7 @@ explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilatera
 % distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
 distType = 1;
 addAngleError = -Prompt("Add error to angle estimation?", {"Yes", "No"}, 1).getUserInput() + 2;
-freezePolicy = Prompt("When to freeze an FLS?", {"Don't freeze", "After each movement", "When it wants to move with a zero vector"}, 1).getUserInput();
+freezePolicy = Prompt("When to freeze an FLS?", {"Don't freeze", "After each movement", "When it wants to move with a zero vector"}, 2).getUserInput();
 swarmEnabled = -Prompt("Enable swarm?", {"Yes", "No"}, 1).getUserInput() + 2;
 if swarmEnabled
     swarmPolicy = Prompt("How should a swarm move?", {"Only one FLS in a swarm may move in a round", "Each swarm member moves using the first recieved vector"}, 1).getUserInput();
@@ -20,12 +20,15 @@ else
     swarmPolicy = 0;
 end
 
-alpha = 2;
+removeAlpha = 1;
+alpha = 1;
+angleError = 5;
+
 
 % rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
-rounds = 10;
+rounds = 0;
 
-save('config.mat','addAngleError', 'swarmPolicy');
+save('config.mat','addAngleError', 'swarmPolicy', 'angleError');
 
 square = [
     0 0 1 1;
@@ -81,4 +84,4 @@ switch shape
 end
 
 clf
-flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds);
+flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha);

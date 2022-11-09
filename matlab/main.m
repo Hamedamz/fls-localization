@@ -1,4 +1,4 @@
-function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds)
+function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha)
 
 
 
@@ -50,6 +50,9 @@ for i = 1:size(pointCloud, 2)
     fls.lastD = 0;
     fls.locked = 0;
     fls.distanceTraveled = 0;
+    if removeAlpha
+        fls.alpha = 0;
+    end
     screen(fls.id) = fls;
 end
 
@@ -65,8 +68,6 @@ figure(3);
 pltResults = zeros(12, rounds);
 
 for j=1:rounds
-    terminate = 0;
-
     if clear
         clf
     end
@@ -183,17 +184,15 @@ for j=1:rounds
         fprintf('  %d FLS(s) moved\n', count);
         if count
             fprintf('   min: %f\n   avg %f\n   max %f\n', minD, sumD/count, maxD);
-        else
-            s = fls.swarm.getAllMembers([]);
-            if size(s,2) == size(flss,2)
-                disp('all FLSs are in one swarm')
-                terminate = 1;
-            end
         end
     end
-%     if terminate
-%         break;
-%     end
+
+    s = fls.swarm.getAllMembers([]);
+    if size(s,2) == size(flss,2)
+        disp('all FLSs are in one swarm')
+        break;
+    end
+
 end
 
 if clear
