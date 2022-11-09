@@ -6,6 +6,8 @@ classdef FLSExplorer < handle
         bestIndex = 0
         i = 0
         freezePolicy
+        lastConf = 0
+        histNeighbors = []
     end
 
     properties (Dependent)
@@ -38,16 +40,23 @@ classdef FLSExplorer < handle
             if d < 0.1
                 if obj.freezePolicy == 3 || obj.freezePolicy == 2
                     fls.freeze = 1;
+                    obj.histNeighbors = [obj.histNeighbors obj.neighbor];
                 end
                 success = 0;
                 return;
             end
+
+            obj.lastConf = fls.confidence;
             
             fls.flyTo(dest);
 
             if obj.neighbor ~= 0
                 fls.swarm.addMember(obj.neighbor);
                 obj.neighbor.swarm.addMember(fls);
+
+                if fls.confidence <= obj.lastConf
+                    obj.histNeighbors = [obj.histNeighbors obj.neighbor];
+                end
             end
 
             if obj.freezePolicy == 2

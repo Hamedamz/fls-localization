@@ -65,7 +65,7 @@ plotScreen([flss.el], 'red', 2);
 % return;
 figure(3);
 
-pltResults = zeros(13, rounds);
+pltResults = zeros(17, rounds);
 
 for j=1:rounds
     if clear
@@ -114,7 +114,9 @@ for j=1:rounds
 
     concurrentExplorers = selectConcurrentExplorers(candidateExplorers);
     numConcurrent = size(concurrentExplorers, 2);
+    [numSwarms, swarmPopulation] = reportSwarm(flss);
     fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
+    fprintf('  %d swarm(s) exist\n', numSwarms);
 
     calSuccess = 0;
     specificEr = 0;
@@ -156,7 +158,8 @@ for j=1:rounds
         minD = Inf;
 
         for i = 1:size(flss, 2)
-            d = flss(i).lastD;
+            fls = flss(i);
+            d = fls.lastD;
 
             if d > 0
                 count = count + 1;
@@ -170,8 +173,22 @@ for j=1:rounds
                 minD = d;
             end
 
-            flss(i).locked = 0;
-            flss(i).lastD = 0;
+            fls.locked = 0;
+            fls.lastD = 0;
+
+            if fls.confidence < 0.5
+                M = fls.swarm.members;
+
+                if size(M, 2) > 0    
+                    for k = 1:size(M, 2)
+                        M(k).swarm.removeMember(fls);
+                    end
+                    fls.swarm.members = [];
+
+                    fprintf('  FLS %s was removed from its swarm\n', fls.id);
+                end
+            end
+                    
         end
 
         pltResults(1,j) = numFrozen;
@@ -187,6 +204,10 @@ for j=1:rounds
         pltResults(11,j) = movSuccess;
         pltResults(12,j) = movZero;
         pltResults(13,j) = specificEr;
+        pltResults(14,j) = numSwarms;
+        pltResults(15,j) = min(swarmPopulation);
+        pltResults(16,j) = mean(swarmPopulation);
+        pltResults(17,j) = max(swarmPopulation);
 
         fprintf('  %d FLS(s) moved\n', count);
         if count

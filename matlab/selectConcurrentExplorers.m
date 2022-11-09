@@ -5,7 +5,7 @@ function flss = selectConcurrentExplorers(allFlss)
     else
         flss = [];
         visited = [];
-        
+
         for i = 1:n
             fls = allFlss(i);
             elN = fls.elNeighbors;
@@ -28,8 +28,6 @@ function flss = selectConcurrentExplorers(allFlss)
                 continue;
             end
 
-            flss = [flss fls];
-
 
             load('config.mat', 'swarmPolicy');
 
@@ -39,6 +37,7 @@ function flss = selectConcurrentExplorers(allFlss)
                 swarm = [];
             end
 
+            flss = [flss fls];
             visited = [visited N swarm];
         end
     end

@@ -12,6 +12,7 @@ classdef FLSExplorerDistAngle < FLSExplorer
             obj.i = 0;
             obj.bestIndex = 0;
 
+            neighbors = fls.elNeighbors;
             n = size(fls.elNeighbors, 2);
             if n < 1
                 fprintf("ERROR distangle failed %s: no neighbors\n", fls.id);
@@ -19,7 +20,22 @@ classdef FLSExplorerDistAngle < FLSExplorer
                 return;
             end
 
-            N = getMostConfident(fls.elNeighbors);
+            found = 0;
+            for i = 1:n
+                [N, k] = getMostConfident(neighbors);
+    
+                if any(ismember(obj.histNeighbors, N))
+                    neighbors(k) = [];
+                else
+                    found = 1;
+                end
+            end
+
+            if ~found
+                fprintf("ERROR distangle failed %s: no new neighbors\n", fls.id);
+                success = 0;
+                return;
+            end
 
 %             rp = randperm(n);
 %             rp = rp(1);

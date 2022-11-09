@@ -62,6 +62,18 @@ classdef FLSSwarm < handle
         end
         
         function removeMember(obj, fls)
+            found = 0;
+            for i = 1:size(obj.members, 2)
+                m = obj.members(i);
+                if fls.id == m.id
+                    found = 1;
+                    break;
+                end
+            end
+
+            if found
+                obj.members(i) = [];
+            end
         end
 
         function M = getAllMembers(obj, m)

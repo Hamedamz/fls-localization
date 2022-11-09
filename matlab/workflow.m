@@ -21,8 +21,8 @@ else
 end
 
 removeAlpha = 1;
-alpha = 3;
-angleError = 3;
+alpha = 5;
+angleError = 5;
 
 
 % rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
