@@ -5,9 +5,10 @@ seed = 1;
 rng(seed);
 
 
-confidenceType = 'distNormalizedGTL';
-weightType = 'distNormalizedGTL';
-clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
+confidenceType = Prompt("Select confidence method:", {"Signal Strength", "Max Radius", "Avg Radius", "Random"}, 2).getUserInput();
+weightType = confidenceType;
+clear = 1;
+% clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
 explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration", "Hybrid", "DistAngle", "DistAngleAvg", "LoGlo"}, 4).getUserInput();
 % distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
 distType = 1;
@@ -19,10 +20,11 @@ if swarmEnabled
 else
     swarmPolicy = 0;
 end
+concurrentPolicy = Prompt("Which neighbors should remain stationay when an FLS is localizing?", {"All el neighbors", "Only the most confident neighbor"}, 1).getUserInput();
 
-removeAlpha = 1;
-alpha = 5;
-angleError = 5;
+removeAlpha = 0;
+alpha = 3;
+angleError = 0;
 
 
 % rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
@@ -62,7 +64,7 @@ cube3 = [
     0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2
     ] + 10;
 
-shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", "square2x2", "cube", "cube3", "race car"}, 1).getUserInput();
+shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", "square2x2", "cube", "cube3", "race car", "butterfly 150"}, 1).getUserInput();
 
 switch shape
     case 1
@@ -81,7 +83,9 @@ switch shape
         p = cube3;
     case 8
         p = readPtcld("./assets/pt1510.ptcld", -1000);
+    case 9
+        p = getPointCloudFromPNG("./assets/butterfly64.png");
 end
 
 clf
-flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha);
+flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy);

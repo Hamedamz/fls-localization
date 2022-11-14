@@ -1,4 +1,4 @@
-function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha)
+function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy)
 
 
 
@@ -7,17 +7,25 @@ screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
 
 distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
+ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingMaxR() FLSRatingAvgR() FLSRatingRandom()};
 
-ratingSet = containers.Map( ...
-    {'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'}, ...
-    {FLSRatingDistanceTraveled(), ...
-    FLSRatingDistanceGTL(), ...
-    FLSRatingNormalizedDistanceGTL(), ...
-    FLSRatingObsGTLNeighbors(), ...
-    FLSRatingMissingNeighbors(), ...
-    FLSRatingErroneousNeighbors(), ...
-    FLSRatingNeighbors(.5, .5)} ...
-    );
+switch concurrentPolicy
+    case 1
+        concurrentSelector = @selectConcurrentExplorers;
+    case 2
+        concurrentSelector = @selectConcurrentExplorers2;
+end
+
+% ratingSet = containers.Map( ...
+%     {'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'}, ...
+%     {FLSRatingDistanceTraveled(), ...
+%     FLSRatingDistanceGTL(), ...
+%     FLSRatingNormalizedDistanceGTL(), ...
+%     FLSRatingObsGTLNeighbors(), ...
+%     FLSRatingMissingNeighbors(), ...
+%     FLSRatingErroneousNeighbors(), ...
+%     FLSRatingNeighbors(.5, .5)} ...
+%     );
 
 
 for i = 1:size(pointCloud, 2)
@@ -39,8 +47,8 @@ for i = 1:size(pointCloud, 2)
             explorer = FLSExplorerLoGlo(freezePolicy);
     end
 
-    confidenceModel = ratingSet(confidenceType);
-    weightModel = ratingSet(weightType);
+    confidenceModel = ratingSet{confidenceType};
+    weightModel = ratingSet{weightType};
     distModel = distModelSet{distType};
     swarm = FLSSwarm(swarmEnabled, swarmPolicy);
 
@@ -65,7 +73,7 @@ plotScreen([flss.el], 'red', 2);
 % return;
 figure(3);
 
-pltResults = zeros(17, rounds);
+pltResults = zeros(18, rounds);
 
 for j=1:rounds
     if clear
@@ -112,11 +120,9 @@ for j=1:rounds
         end
     end
 
-    concurrentExplorers = selectConcurrentExplorers(candidateExplorers);
+    concurrentExplorers = concurrentSelector(candidateExplorers);
     numConcurrent = size(concurrentExplorers, 2);
-    [numSwarms, swarmPopulation] = reportSwarm(flss);
     fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
-    fprintf('  %d swarm(s) exist\n', numSwarms);
 
     calSuccess = 0;
     specificEr = 0;
@@ -191,9 +197,13 @@ for j=1:rounds
                     
         end
 
+        [numSwarms, swarmPopulation] = reportSwarm(flss);
+        fprintf('  %d swarm(s) with %s members exist\n', numSwarms, strjoin(string(swarmPopulation), ', '));
+
+
         pltResults(1,j) = numFrozen;
         pltResults(2,j) = count;
-        pltResults(3,j) = sumD / count;
+        pltResults(3,j) = sumD / size(flss, 2);
         pltResults(4,j) = maxD;
         pltResults(5,j) = hausdorff([flss.gtl], [flss.el]);
         pltResults(6,j) = sum([flss.confidence]) / size(flss,2);
@@ -208,6 +218,8 @@ for j=1:rounds
         pltResults(15,j) = min(swarmPopulation);
         pltResults(16,j) = mean(swarmPopulation);
         pltResults(17,j) = max(swarmPopulation);
+        pltResults(18,j) = minD;
+
 
         fprintf('  %d FLS(s) moved\n', count);
         if count
@@ -215,6 +227,10 @@ for j=1:rounds
         end
     end
 
+%     if numSwarms == 1
+%         disp('all FLSs are in one swarm')
+%         break;
+%     end
     s = fls.swarm.getAllMembers([]);
     if size(s,2) == size(flss,2)
         disp('all FLSs are in one swarm')
@@ -230,12 +246,23 @@ end
 reportMetrics(flss);
 plotScreen([flss.el], 'black', 3)
 
-if swarmPolicy == 1
+switch confidenceType
+    case 1
     result1 = pltResults;
     save('result1.mat','result1');
-else
+    
+    case 2
     result2 = pltResults;
     save('result2.mat','result2');
+
+    case 3
+    result3 = pltResults;
+    save('result3.mat','result3');
+
+    case 4
+    result4 = pltResults;
+    save('result4.mat','result4');
 end
+
 end
 
