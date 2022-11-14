@@ -1,18 +1,13 @@
-function plotResults(A, B, T, fig)
+function plotResults(T, fig, varargin)
 figure(fig)
 
-% yFrozen = data(1,:);
-% yMoved = data(2,:);
-% yAvgDist = data(3,:);
-% yMaxDist = data(4,:);
-% yH = data(5,:);
-% yAvgConf = data(6,:);
+A = varargin{1};
 
 x=1:size(A,2);
 
 extraInputs = {'interpreter','latex','fontsize',18};
 
-axes('Xlim', [1,size(A,2)], 'XTick', 1:10:size(A,2), 'NextPlot', 'add');
+axes('Xlim', [1,size(A,2)], 'XTick', 1:5:size(A,2), 'NextPlot', 'add');
 
 t=title(T);
 %xlabel('Point Cloud ID',extraInputs{:})
@@ -45,11 +40,14 @@ hold on
 %plot(x,simple,'--cx') 
 %}
 
-plot(x,A,'-b+','LineWidth', 2.5,'DisplayName','A')
-hold on 
-plot(x,B,'--mx','LineWidth', 2.5,'DisplayName','B')
-% hold on 
-% plot(x,yAvgDist,'--ko','LineWidth', 2.5,'DisplayName','AvgDist') 
+styles = {'-b+', '-mx', '-c*', '-go'};
+
+
+for i = 1:floor((nargin-2)/2)
+    plot(x,varargin{2*i - 1}, styles{i}, 'LineWidth', 1.5,'DisplayName',varargin{2*i})
+    hold on 
+end
+
 hold off
 
 

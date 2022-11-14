@@ -8,8 +8,8 @@ else
     scatter(pointCloud(1,:), pointCloud(2,:), color, 'filled')
 end
 
-axis([0 30 0 30])
-axis square
+% axis([0 70 0 50])
+% axis square
 
 end
 
