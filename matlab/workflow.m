@@ -64,7 +64,8 @@ cube3 = [
     0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2
     ] + 10;
 
-shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", "square2x2", "cube", "cube3", "race car", "butterfly 150"}, 1).getUserInput();
+shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", "square2x2", "cube", "cube3", "race car", "butterfly 150", "454 points 3d" ...
+    , "758 points 3d","760 points 3d","997 points 3d","1197 points 3d","1562 points 3d", "1727 points 3d"}, 1).getUserInput();
 
 switch shape
     case 1
@@ -82,9 +83,23 @@ switch shape
     case 7
         p = cube3;
     case 8
-        p = readPtcld("./assets/pt1510.ptcld", -1000);
+        p = readPtcld("./assets/pt1510.ptcld", -1);
     case 9
         p = getPointCloudFromPNG("./assets/butterfly64.png");
+    case 10
+        p = readPtcld("./assets/PointClouds/pt1609.454.ptcld", -1);
+    case 11
+        p = readPtcld("./assets/PointClouds/pt1608.758.ptcld", -1);
+    case 12
+        p = readPtcld("./assets/PointClouds/pt1625.760.ptcld", -1);
+    case 13
+        p = readPtcld("./assets/PointClouds/pt1620.997.ptcld", -1);
+    case 14
+        p = readPtcld("./assets/PointClouds/pt1617.1197.ptcld", -1);
+    case 15
+        p = readPtcld("./assets/PointClouds/pt1630.1562.ptcld", -1);
+    case 16
+        p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
 end
 
 clf
