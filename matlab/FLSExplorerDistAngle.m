@@ -33,6 +33,7 @@ classdef FLSExplorerDistAngle < FLSExplorer
 
             if ~found
                 fprintf("ERROR distangle failed %s: no new neighbors\n", fls.id);
+                obj.histNeighbors = [];
                 success = 0;
                 return;
             end

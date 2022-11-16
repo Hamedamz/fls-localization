@@ -8,6 +8,8 @@ classdef FLS < handle
         alpha
         speed = 1
         communicationRange = 2.85
+        crm
+        fixN
         distanceTraveled = 0
         lastD = 0
 
@@ -17,6 +19,8 @@ classdef FLS < handle
         explorer
         swarm
         screen
+        celNeighbors = []
+        cgtlNeighbors = []
 
         freeze = 0
         locked = 0
@@ -36,7 +40,7 @@ classdef FLS < handle
     end
 
     methods
-        function obj = FLS(el, gtl, alpha, weightModel, confidenceModel, distModel, explorer, swarm, screen)
+        function obj = FLS(el, gtl, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, fixN, screen)
             obj.id = coordToId(gtl);
             obj.el = el;
             obj.gtl = gtl;
@@ -48,6 +52,8 @@ classdef FLS < handle
             obj.D = size(gtl,1);
             obj.swarm = swarm;
             obj.alpha = alpha / 180 * pi;
+            obj.crm = crm;
+            obj.fixN = fixN;
         end
 
         function ve = addErrorToVector(obj, v)
@@ -110,6 +116,11 @@ classdef FLS < handle
 
 
         function out = get.elNeighbors(obj)
+            if obj.fixN
+                out = obj.celNeighbors;
+                return;
+            end
+
             N = [];
             flss = obj.screen.values();
 
@@ -163,6 +174,11 @@ classdef FLS < handle
         end
 
         function out = get.gtlNeighbors(obj)
+            if size(obj.cgtlNeighbors, 2)
+                out = obj.cgtlNeighbors;
+                return;
+            end
+
             N = [];
             d = floor(obj.communicationRange);
             for i = -d:d
@@ -196,11 +212,43 @@ classdef FLS < handle
             end
 
             out = N;
+            obj.cgtlNeighbors = N;
         end
 
-        function computeNeighbors(obj, screen)
-            obj.computeGtlNeighbors(screen);
-            obj.computeElNeighbors(screen);            
+        function computeNeighbors(obj, allflss)
+            n = size(obj.celNeighbors, 2);
+            m = obj.fixN - n;
+
+            if m > 0
+                B = [obj obj.celNeighbors];
+                flss = allflss(~ismember(allflss, B));
+
+                k = randperm(size(flss,2), m);
+                N = flss(k);
+
+                obj.celNeighbors = [obj.celNeighbors, N];
+
+                for i=1:size(N,2)
+                    if ~any(ismember(N(i).celNeighbors, obj))
+                       N(i).celNeighbors = [N(i).celNeighbors obj]; 
+                    end
+                end
+            end
+        end
+
+        function adjustCR(obj)
+            minD = Inf;
+            flss = obj.screen.values();
+            for i = 1:size(flss,2)
+                if (flss{i}.id == obj.id)
+                    continue;
+                end
+                d = obj.distModel.getDistance(obj, flss{i});
+                if d < minD
+                    minD = d;
+                end
+            end
+            obj.communicationRange = minD * obj.crm;
         end
 
 

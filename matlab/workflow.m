@@ -1,8 +1,6 @@
 %'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'
 addpath cli/;
 
-seed = 1;
-rng(seed);
 
 
 confidenceType = Prompt("Select confidence method:", {"Signal Strength", "Max Radius", "Avg Radius", "Random"}, 2).getUserInput();
@@ -12,7 +10,7 @@ clear = 1;
 explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration", "Hybrid", "DistAngle", "DistAngleAvg", "LoGlo"}, 4).getUserInput();
 % distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
 distType = 1;
-addAngleError = -Prompt("Add error to angle estimation?", {"Yes", "No"}, 1).getUserInput() + 2;
+addAngleError = -Prompt("Add error to angle estimation?", {"Yes", "No"}, 2).getUserInput() + 2;
 freezePolicy = Prompt("When to freeze an FLS?", {"Don't freeze", "After each movement", "When it wants to move with a zero vector"}, 2).getUserInput();
 swarmEnabled = -Prompt("Enable swarm?", {"Yes", "No"}, 1).getUserInput() + 2;
 if swarmEnabled
@@ -25,6 +23,25 @@ concurrentPolicy = Prompt("Which neighbors should remain stationay when an FLS i
 removeAlpha = 0;
 alpha = 3;
 angleError = 0;
+
+crm = Prompt("Adjust communication range?", {"Yes", "No"}, 2).getUserInput();
+
+if crm == 1
+    crm = Prompt("Input the multiplier for communication range?", {}, 1).getDirectInput();
+    crm = str2double(crm);
+else
+    crm = 0;
+end
+
+
+fixN = Prompt("Assign random neighbors?", {"Yes", "No"}, 1).getUserInput();
+
+if fixN == 1
+    fixN = Prompt("Input the minimum number of neighbors?", {}, 1).getDirectInput();
+    fixN = str2double(fixN);
+else
+    fixN = 0;
+end
 
 
 % rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
@@ -103,4 +120,4 @@ switch shape
 end
 
 clf
-flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy);
+flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN);

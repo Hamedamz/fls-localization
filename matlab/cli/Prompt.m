@@ -36,6 +36,17 @@ classdef Prompt < handle
             obj.userChoice = choice;
             out = choice;
         end
+
+        function out = getDirectInput(obj)
+            choice = input(obj.getPrompt(), "s");
+
+            if isempty(choice) || isnan(choice)
+                choice = obj.default;
+            end
+            
+            obj.userChoice = choice;
+            out = choice;
+        end
     end
 end
 

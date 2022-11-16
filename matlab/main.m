@@ -1,6 +1,7 @@
-function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy)
+function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN)
 
-
+rng('default');
+rng(1);
 
 flss = FLS.empty(size(pointCloud, 2), 0);
 screen = containers.Map('KeyType','char','ValueType','any');
@@ -52,7 +53,7 @@ for i = 1:size(pointCloud, 2)
     distModel = distModelSet{distType};
     swarm = FLSSwarm(swarmEnabled, swarmPolicy);
 
-    fls = FLS(dispatcher.coord, point, alpha, weightModel, confidenceModel, distModel, explorer, swarm, screen);
+    fls = FLS(dispatcher.coord, point, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, fixN, screen);
     flss(i) = fls;
     fls.flyTo(point);
     fls.lastD = 0;
@@ -73,7 +74,7 @@ plotScreen([flss.el], 'red', 2);
 % return;
 figure(3);
 
-pltResults = zeros(18, rounds);
+pltResults = zeros(21, rounds);
 
 for j=1:rounds
     if clear
@@ -101,6 +102,40 @@ for j=1:rounds
 %         break
 %     end
 
+    if ~fixN || (fixN && j == 1)
+        sumN = 0;
+        maxN = -Inf;
+        minN = Inf;
+        
+        for i = 1:size(flss, 2)
+            fls = flss(i);
+    
+            if crm
+                fls.adjustCR();
+            elseif fixN
+                fls.computeNeighbors(flss);
+            end
+    
+            n = size(fls.elNeighbors, 2);
+    
+            sumN = sumN + n;
+            if n > maxN
+                maxN = n;
+            end
+            if n < minN
+                minN = n;
+            end
+        end
+
+        pltResults(19,j) = minN;
+        pltResults(20,j) = sumN/size(flss, 2);
+        pltResults(21,j) = maxN;
+
+        if j == 1
+            fprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\n",pltResults(19,j),pltResults(20,j),pltResults(21,j))
+        end
+    end
+    
 
     candidateExplorers = selectCandidateExplorers(flss);
     numCandidate = size(candidateExplorers, 2);
@@ -179,6 +214,8 @@ for j=1:rounds
                 minD = d;
             end
 
+         
+
             fls.locked = 0;
             fls.lastD = 0;
 
@@ -222,6 +259,7 @@ for j=1:rounds
 
 
         fprintf('  %d FLS(s) moved\n', count);
+        fprintf('  hausdorff: %f\n', pltResults(5,j));
         if count
             fprintf('   min: %f\n   avg %f\n   max %f\n', minD, sumD/count, maxD);
         end
@@ -246,20 +284,20 @@ end
 reportMetrics(flss);
 plotScreen([flss.el], 'black', 3)
 
-switch confidenceType
-    case 1
+switch crm
+    case 10
     result1 = pltResults;
     save('result1.mat','result1');
     
-    case 2
+    case 1
     result2 = pltResults;
     save('result2.mat','result2');
 
-    case 3
+    case 2
     result3 = pltResults;
     save('result3.mat','result3');
 
-    case 4
+    case 5
     result4 = pltResults;
     save('result4.mat','result4');
 end
