@@ -10,6 +10,7 @@ end
 
 axis([0 30 0 30])
 axis square
+% axis equal
 
 end
 

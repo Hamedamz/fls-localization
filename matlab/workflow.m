@@ -21,7 +21,7 @@ end
 concurrentPolicy = Prompt("Which neighbors should remain stationay when an FLS is localizing?", {"All el neighbors", "Only the most confident neighbor"}, 1).getUserInput();
 
 removeAlpha = 0;
-alpha = 3;
+alpha = 5;
 angleError = 0;
 
 crm = Prompt("Adjust communication range?", {"Yes", "No"}, 2).getUserInput();
@@ -84,7 +84,16 @@ cube3 = [
 shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", "square2x2", "cube", "cube3", "race car", "butterfly 150", "454 points 3d" ...
     , "758 points 3d","760 points 3d","997 points 3d","1197 points 3d","1562 points 3d", "1727 points 3d"}, 1).getUserInput();
 
-switch shape
+
+
+
+for i=3:3
+%     shape = mod(ceil(i/3-1),2)+2;
+%     explorerType = 2^(mod(ceil(i/6)+1,3));
+%     alpha = 2*mod(i-1,3)+1;
+%     shape = 1;
+    alpha = i*2-1;
+    switch shape
     case 1
         p = getPointCloudFromPNG("./assets/butterfly2.png");
     case 2
@@ -117,7 +126,7 @@ switch shape
         p = readPtcld("./assets/PointClouds/pt1630.1562.ptcld", -1);
     case 16
         p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
-end
+    end
 
-clf
-flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN);
+    flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
+end

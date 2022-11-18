@@ -1,14 +1,37 @@
 function compareResults()
-    load('result1.mat', 'result1');
-    load('result2.mat', 'result2');
+%     load('result1.mat', 'result1');
+%     load('result2.mat', 'result2');
     load('result3.mat', 'result3');
-    load('result4.mat', 'result4');
 
-    plotResults('Minimum Distance Traveled', 4, result1(18,:), 'Signal Strength', result2(18,:), 'Max Radius', result3(18,:), 'Avg Radius', result4(18,:), 'Random');
-    plotResults('Average Distance Traveled', 5, result1(3,:), 'Signal Strength', result2(3,:), 'Max Radius', result3(3,:), 'Avg Radius', result4(3,:), 'Random');
-    plotResults('Maximum Distance Traveled', 6, result1(4,:), 'Signal Strength', result2(4,:), 'Max Radius', result3(4,:), 'Avg Radius', result4(4,:), 'Random');
-    plotResults('Number of Moving FLSs', 7, result1(2,:), 'Signal Strength', result2(2,:), 'Max Radius', result3(2,:), 'Avg Radius', result4(2,:), 'Random');
-%     nexttile
+%     result1=result1(:,1:33);
+%     result2=result2(:,1:28);
+%     result3=result3(:,1:27);
+
+%     plotResults('Number of moving FLSs', 10, result1(2,:), '\epsilon=1^{\circ}', result2(2,:), '\epsilon=3^{\circ}', result3(2,:), '\epsilon=5^{\circ}');
+%     plotResults('Minimum confidence of FLSs', 11, result1(13,:), '\epsilon=1^{\circ}', result2(13,:), '\epsilon=3^{\circ}', result3(13,:), '\epsilon=5^{\circ}');
+%     axis([1 33 0 1])
+%     plotResults('Average distance moved by Localizing FLSs', 12, result1(23,:), '\epsilon=1^{\circ}', result2(23,:), '\epsilon=3^{\circ}', result3(23,:), '\epsilon=5^{\circ}');
+%     plotResults('Average distance moved by swarm FLSs', 13, result1(24,:), '\epsilon=1^{\circ}', result2(24,:), '\epsilon=3^{\circ}', result3(24,:), '\epsilon=5^{\circ}');
+%     axis([1 33 0 4])
+%     plotResults('Number of localizing FLSs', 14, result1(8,:), '\epsilon=1^{\circ}', result2(8,:), '\epsilon=3^{\circ}', result3(8,:), '\epsilon=5^{\circ}');
+%     plotResults('Number of shared anchored FLSs', 15, result1(22,:), '\epsilon=1^{\circ}', result2(22,:), '\epsilon=3^{\circ}', result3(22,:), '\epsilon=5^{\circ}');
+%     plotResults('Number of stationary FLSs', 16, 997-result1(8,:), '\epsilon=1^{\circ}', 997-result2(8,:), '\epsilon=3^{\circ}', 977-result3(8,:), '\epsilon=5^{\circ}');
+%     plotResults('Number of swarms', 17, result1(14,:), '\epsilon=1^{\circ}', result2(14,:), '\epsilon=3^{\circ}', result3(14,:), '\epsilon=5^{\circ}');
+%     plotResults('Average population of swarms ', 18, result1(16,:), '\epsilon=1^{\circ}', result2(16,:), '\epsilon=3^{\circ}', result3(16,:), '\epsilon=5^{\circ}');
+
+    plotResults('Number of moving FLSs', 10, result3(2,:), '\epsilon=5^{\circ}');
+    plotResults('Minimum confidence of FLSs', 11, result3(13,:), '\epsilon=5^{\circ}');
+    axis([1 100 0 1])
+    plotResults('Average distance moved by Localizing FLSs', 12, result3(23,:), '\epsilon=5^{\circ}');
+    plotResults('Average distance moved by swarm FLSs', 13, result3(24,:), '\epsilon=5^{\circ}');
+    plotResults('Number of localizing FLSs', 14, result3(8,:), '\epsilon=5^{\circ}');
+    plotResults('Number of shared anchored FLSs', 15, result3(22,:), '\epsilon=5^{\circ}');
+    plotResults('Number of stationary FLSs', 16, 100-result3(8,:), '\epsilon=5^{\circ}');
+    plotResults('Number of swarms', 17, result3(14,:), '\epsilon=5^{\circ}');
+    plotResults('Average population of swarms ', 18, result3(16,:), '\epsilon=5^{\circ}');
+    plotResults('Average error of ptcld ', 19, result3(25,:), '\epsilon=5^{\circ}');
+
+    %     nexttile
 %     plotResults(result1(5,:), result2(5,:), 'Hausdorff');
 %     nexttile
 %     plotResults(result1(5,:), result2(3,:), 'avg d');

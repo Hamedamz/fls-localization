@@ -1,4 +1,4 @@
-function [min, max, avg, totalTraveled, numFLSMoved] = reportMetrics(flss)
+function [s, avg, min, max, totalTraveled, numFLSMoved] = reportMetrics(flss)
 min = Inf;
 max = 0;
 sum = 0;
@@ -60,6 +60,6 @@ cavg = csum / i;
 
 dH = hausdorff([flss.gtl], [flss.el]);
 
-fprintf('\nHausdorff Distance: %f\nDifference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', dH, min, avg, max, cmin, cavg, cmax, totalTraveled, numFLSMoved, maxTime);
+s=sprintf('\nHausdorff Distance: %f\nDifference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', dH, min, avg, max, cmin, cavg, cmax, totalTraveled, numFLSMoved, maxTime);
 end
 

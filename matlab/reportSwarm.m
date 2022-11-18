@@ -1,9 +1,10 @@
-function [numSwarms, swarmPopulation] = reportSwarm(flss)
+function [numSwarms, swarmPopulation, avgConf] = reportSwarm(flss)
     n = size(flss,2);
 
     visited = [];
     numSwarms = 0;
     swarmPopulation = [0];
+    avgConf = [0];
 
     for i = 1:n
         fls = flss(i);
@@ -24,6 +25,7 @@ function [numSwarms, swarmPopulation] = reportSwarm(flss)
         if ns > 1
             numSwarms = numSwarms + 1;
             swarmPopulation(numSwarms) = ns;
+            avgConf(numSwarms) = mean([swarm.confidence]);
         end
 
         visited = [visited swarm];

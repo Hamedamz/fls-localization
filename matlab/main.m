@@ -1,4 +1,4 @@
-function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN)
+function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, ff)
 
 rng('default');
 rng(1);
@@ -67,21 +67,27 @@ end
 
 
 grid on
-plotScreen([flss.gtl], 'blue', 1);
+plotScreen([flss.gtl], 'blue', 3*ff+1);
 
-plotScreen([flss.el], 'red', 2);
+plotScreen([flss.el], 'red', 3*ff+2);
+text2 = reportMetrics(flss);
+txt = sprintf("%s\n", text2);
+annotation('textbox',[.9 .7 .1 .2], ...
+    'String',txt,'EdgeColor','none')
 
+h = hausdorff([flss.gtl], [flss.el]);
 % return;
-figure(3);
+figure(3*ff+3);
 
-pltResults = zeros(21, rounds);
+pltResults = zeros(25, rounds);
 
 for j=1:rounds
+    terminate = 0;
     if clear
         clf
     end
 
-    plotScreen([flss.el], 'red', 3);
+    plotScreen([flss.el], 'red', 3*ff+3);
     hold on
 
     fprintf('\nROUND %d:\n', j);
@@ -131,9 +137,7 @@ for j=1:rounds
         pltResults(20,j) = sumN/size(flss, 2);
         pltResults(21,j) = maxN;
 
-        if j == 1
-            fprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\n",pltResults(19,j),pltResults(20,j),pltResults(21,j))
-        end
+        
     end
     
 
@@ -145,13 +149,13 @@ for j=1:rounds
         disp('  no FLSs is selected to move')
 
         if all([flss.freeze] == 0)
-            break;
+            terminate = 1;
         else
             for k = 1:size(flss, 2)
                 flss(k).freeze = 0;
             end
     
-            continue;
+%             continue;
         end
     end
 
@@ -174,7 +178,9 @@ for j=1:rounds
     fprintf('  %d FLS(s) failed to compute v\n', calFail);
     fprintf('  %d FLS(s) computed v\n', calSuccess);
 
-    while size(concurrentExplorers, 2)
+    anchors = [];
+    sumL = 0;
+%     while size(concurrentExplorers, 2)
         itemsToRemove = [];
 
         for i = 1:size(concurrentExplorers, 2)
@@ -187,16 +193,34 @@ for j=1:rounds
         for i = 1:size(itemsToRemove, 2)
             fls = itemsToRemove(i);
             movSuccess = movSuccess + fls.finalizeExploration();
+            if fls.explorer.neighbor ~= 0
+                anchors = [anchors fls.explorer.neighbor];
+            end
+            sumL = sumL + fls.lastD;
         end
         fprintf('  %d FLS(s) have nonzero v\n', movSuccess);
         movZero = calSuccess - movSuccess;
 
-        concurrentExplorers = setdiff(concurrentExplorers, itemsToRemove);
+%         concurrentExplorers = setdiff(concurrentExplorers, itemsToRemove);
+%     end
 
-        count = 0;
+    otherFlss = setdiff(flss, itemsToRemove);
+
+    sumS = 0;
+    countS = 0;
+    for i = 1:size(otherFlss, 2)
+        d = otherFlss(i).lastD;
+        if d > 0
+            countS = countS + 1;
+            sumS = sumS + d;
+        end
+    end
+
+    count = 0;
         sumD = 0;
         maxD = -Inf;
         minD = Inf;
+        minC = Inf;
 
         for i = 1:size(flss, 2)
             fls = flss(i);
@@ -212,6 +236,10 @@ for j=1:rounds
             end
             if d < minD
                 minD = d;
+            end
+
+            if fls.confidence < minC
+                minC = fls.confidence;
             end
 
          
@@ -250,12 +278,25 @@ for j=1:rounds
         pltResults(10,j) = calFail;
         pltResults(11,j) = movSuccess;
         pltResults(12,j) = movZero;
-        pltResults(13,j) = specificEr;
+        pltResults(13,j) = minC;
         pltResults(14,j) = numSwarms;
         pltResults(15,j) = min(swarmPopulation);
         pltResults(16,j) = mean(swarmPopulation);
         pltResults(17,j) = max(swarmPopulation);
         pltResults(18,j) = minD;
+        pltResults(22,j) = max(0,size(anchors,2) - size(unique(anchors),2));
+        if numConcurrent == 0
+            pltResults(23,j) = 0; % avg d localizing
+        else
+            pltResults(23,j) = sumL / movSuccess; % avg d localizing
+        end
+        if countS == 0
+            pltResults(24,j) = 0; % avg d swarm
+        else
+            pltResults(24,j) = sumS / countS; % avg d swarm
+        end
+        [s, avgE] = reportMetrics(flss);
+        pltResults(25,j) = avgE;
 
 
         fprintf('  %d FLS(s) moved\n', count);
@@ -263,7 +304,6 @@ for j=1:rounds
         if count
             fprintf('   min: %f\n   avg %f\n   max %f\n', minD, sumD/count, maxD);
         end
-    end
 
 %     if numSwarms == 1
 %         disp('all FLSs are in one swarm')
@@ -275,17 +315,29 @@ for j=1:rounds
         break;
     end
 
+    if terminate
+        break;
+    end
+
 end
 
 if clear
     clf
 end
 
-reportMetrics(flss);
-plotScreen([flss.el], 'black', 3)
+text1 = sprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\nInitial Hausdorff: %f\nrounds: %d",pltResults(19,1),pltResults(20,1),pltResults(21,1), h, j);
 
-switch crm
-    case 10
+
+text2 = reportMetrics(flss);
+
+txt = sprintf("%s\n%s\n", text1, text2);
+
+plotScreen([flss.el], 'black', 3*ff+3)
+annotation('textbox',[.9 .7 .1 .2], ...
+    'String',txt,'EdgeColor','none')
+
+switch ff
+    case 0
     result1 = pltResults;
     save('result1.mat','result1');
     
@@ -297,9 +349,21 @@ switch crm
     result3 = pltResults;
     save('result3.mat','result3');
 
-    case 5
+    case 3
     result4 = pltResults;
     save('result4.mat','result4');
+
+    case 4
+    result5 = pltResults;
+    save('result5.mat','result5');
+
+    case 5
+    result6 = pltResults;
+    save('result6.mat','result6');
+
+    case 6
+    result7 = pltResults;
+    save('result7.mat','result7');
 end
 
 end

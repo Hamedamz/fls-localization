@@ -7,9 +7,9 @@ x=1:size(A,2);
 
 extraInputs = {'interpreter','latex','fontsize',18};
 
-axes('Xlim', [1,size(A,2)], 'XTick', 1:5:size(A,2), 'NextPlot', 'add');
+axes('Xlim', [1,100], 'XTick', 1:5:100, 'NextPlot', 'add');
 
-t=title(T);
+% t=title(T);
 %xlabel('Point Cloud ID',extraInputs{:})
 %ylabel('Execution Time (Seconds)',extraInputs{:})
 xlabel('',extraInputs{:})
@@ -40,11 +40,11 @@ hold on
 %plot(x,simple,'--cx') 
 %}
 
-styles = {'-b+', '-mx', '-c*', '-go'};
+styles = {'-c*', '-k+', '-mx', '-c*', '-go'};
 
 
 for i = 1:floor((nargin-2)/2)
-    plot(x,varargin{2*i - 1}, styles{i}, 'LineWidth', 1.5,'DisplayName',varargin{2*i})
+    plot(1:size(varargin{2*i-1},2),varargin{2*i - 1}, styles{i}, 'LineWidth', 1.5,'DisplayName',varargin{2*i})
     hold on 
 end
 

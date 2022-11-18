@@ -79,7 +79,8 @@ classdef FLS < handle
                     j = j / norm(j);
                 end
 
-                phi = rand(1) * 2 * pi;
+%                 phi = rand(1) * 2 * pi;
+                phi = 0;
                 e = i * cos(phi) + j * sin(phi);
                 ve = v + e * rand(1) * obj.r;
                 nve = norm(ve);
