@@ -1,4 +1,4 @@
-function [s, avg, min, max, totalTraveled, numFLSMoved] = reportMetrics(flss)
+function [s, avg, cavg, max, totalTraveled, numFLSMoved] = reportMetrics(flss)
 min = Inf;
 max = 0;
 sum = 0;

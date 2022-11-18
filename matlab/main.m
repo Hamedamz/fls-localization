@@ -79,7 +79,7 @@ h = hausdorff([flss.gtl], [flss.el]);
 % return;
 figure(3*ff+3);
 
-pltResults = zeros(25, rounds);
+pltResults = zeros(26, rounds);
 
 for j=1:rounds
     terminate = 0;
@@ -295,8 +295,9 @@ for j=1:rounds
         else
             pltResults(24,j) = sumS / countS; % avg d swarm
         end
-        [s, avgE] = reportMetrics(flss);
+        [s, avgE, avgC] = reportMetrics(flss);
         pltResults(25,j) = avgE;
+        pltResults(26,j) = avgC;
 
 
         fprintf('  %d FLS(s) moved\n', count);
