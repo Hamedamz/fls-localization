@@ -70,12 +70,12 @@ grid on
 plotScreen([flss.gtl], 'blue', 3*ff+1);
 
 plotScreen([flss.el], 'red', 3*ff+2);
-text2 = reportMetrics(flss);
-txt = sprintf("%s\n", text2);
-annotation('textbox',[.9 .7 .1 .2], ...
-    'String',txt,'EdgeColor','none')
+% text2 = reportMetrics(flss);
+% txt = sprintf("%s\n", text2);
+% annotation('textbox',[.9 .7 .1 .2], ...
+%     'String',txt,'EdgeColor','none')
 
-h = hausdorff([flss.gtl], [flss.el]);
+% h = hausdorff([flss.gtl], [flss.el]);
 % return;
 figure(3*ff+3);
 
@@ -270,7 +270,7 @@ for j=1:rounds
         pltResults(2,j) = count;
         pltResults(3,j) = sumD / size(flss, 2);
         pltResults(4,j) = maxD;
-        pltResults(5,j) = hausdorff([flss.gtl], [flss.el]);
+%         pltResults(5,j) = hausdorff([flss.gtl], [flss.el]);
         pltResults(6,j) = sum([flss.confidence]) / size(flss,2);
         pltResults(7,j) = numCandidate;
         pltResults(8,j) = numConcurrent;
@@ -301,7 +301,7 @@ for j=1:rounds
 
 
         fprintf('  %d FLS(s) moved\n', count);
-        fprintf('  hausdorff: %f\n', pltResults(5,j));
+%         fprintf('  hausdorff: %f\n', pltResults(5,j));
         if count
             fprintf('   min: %f\n   avg %f\n   max %f\n', minD, sumD/count, maxD);
         end
@@ -326,12 +326,14 @@ if clear
     clf
 end
 
-text1 = sprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\nInitial Hausdorff: %f\nrounds: %d",pltResults(19,1),pltResults(20,1),pltResults(21,1), h, j);
+
+text1 = sprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\nrounds: %d",pltResults(19,1),pltResults(20,1),pltResults(21,1), j);
 
 
 text2 = reportMetrics(flss);
 
-txt = sprintf("%s\n%s\n", text1, text2);
+dH = hausdorff([flss.gtl], [flss.el]);
+txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", text1, text2, dH);
 
 plotScreen([flss.el], 'black', 3*ff+3)
 annotation('textbox',[.9 .7 .1 .2], ...

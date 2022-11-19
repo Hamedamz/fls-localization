@@ -7,7 +7,7 @@ x=1:size(A,2);
 
 extraInputs = {'interpreter','latex','fontsize',18};
 
-axes('Xlim', [1,100], 'XTick', 1:5:100, 'NextPlot', 'add');
+axes('Xlim', [1,36], 'XTick', 1:2:36, 'NextPlot', 'add');
 
 % t=title(T);
 %xlabel('Point Cloud ID',extraInputs{:})
@@ -40,7 +40,7 @@ hold on
 %plot(x,simple,'--cx') 
 %}
 
-styles = {'-c*', '-k+', '-mx', '-c*', '-go'};
+styles = {'-k+', '-mx', '-c*', '-go'};
 
 
 for i = 1:floor((nargin-2)/2)

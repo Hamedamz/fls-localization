@@ -8,9 +8,9 @@ else
     scatter(pointCloud(1,:), pointCloud(2,:), color, 'filled')
 end
 
-axis([0 30 0 30])
-axis square
-% axis equal
+% axis([0 30 0 30])
+% axis square
+axis equal
 
 end
 
