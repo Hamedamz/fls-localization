@@ -224,10 +224,47 @@ classdef FLS < handle
                 B = [obj obj.celNeighbors];
                 flss = allflss(~ismember(allflss, B));
 
-                k = randperm(size(flss,2), m);
-                N = flss(k);
+                N1 = [];
+                N2 = [];
+                N3 = [];
+                N4 = [];
+                for i = 1:size(flss,2)
+                    d = norm(flss(i).el - obj.el);
+                    if d < 2.5
+                        N1 = [N1 flss(i)];
+                    elseif d < 5
+                        N2 = [N2 flss(i)];
+                    elseif d < 10
+                        N3 = [N3 flss(i)];
+                    else
+                        N4 = [N4 flss(i)];
+                    end
+                    if size(N1,2) == m
+                        N = N1;
+                        break;
+                    end
+                end
 
-                obj.celNeighbors = [obj.celNeighbors, N];
+                if size(N1,2) < m
+                    N = N1;
+                    n2 = m - size(N,2);
+                    if n2 <= size(N2,2)
+                        N = [N N2(1:n2)];
+                    else
+                        N = [N N2];
+                        n3 = m - size(N,2);
+                        if n3 <= size(N3,2)
+                            N = [N N3(1:n3)];
+                        else
+                            N = [N N3 N4(m-size(N,2))];
+                        end
+                    end
+                end
+
+%                 k = randperm(size(flss,2), m);
+%                 N = flss(k);
+
+                obj.celNeighbors = [obj.celNeighbors N];
 
                 for i=1:size(N,2)
                     if ~any(ismember(N(i).celNeighbors, obj))

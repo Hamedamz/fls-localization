@@ -120,6 +120,12 @@ for j=1:rounds
                 fls.adjustCR();
             elseif fixN
                 fls.computeNeighbors(flss);
+%                 if i == 1
+%                     k = 1;
+%                 else
+%                     k = i - 1;
+%                 end
+%                 fls.celNeighbors = [flss(1)];
             end
     
             n = size(fls.elNeighbors, 2);
@@ -160,6 +166,7 @@ for j=1:rounds
     end
 
     concurrentExplorers = concurrentSelector(candidateExplorers);
+%     concurrentExplorers = flss;
     numConcurrent = size(concurrentExplorers, 2);
     fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
 
