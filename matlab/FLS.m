@@ -7,7 +7,7 @@ classdef FLS < handle
         r
         alpha
         speed = 1
-        communicationRange = 2.85
+        communicationRange = 1.85
         crm
         fixN
         distanceTraveled = 0
@@ -245,21 +245,8 @@ classdef FLS < handle
                     end
                 end
 
-                if size(N1,2) < m
-                    N = N1;
-                    n2 = m - size(N,2);
-                    if n2 <= size(N2,2)
-                        N = [N N2(1:n2)];
-                    else
-                        N = [N N2];
-                        n3 = m - size(N,2);
-                        if n3 <= size(N3,2)
-                            N = [N N3(1:n3)];
-                        else
-                            N = [N N3 N4(m-size(N,2))];
-                        end
-                    end
-                end
+                allN = [N1 N2 N3 N4];
+                N = allN(1:m);
 
 %                 k = randperm(size(flss,2), m);
 %                 N = flss(k);

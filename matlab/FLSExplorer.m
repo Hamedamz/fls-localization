@@ -37,14 +37,14 @@ classdef FLSExplorer < handle
             
             d = norm(dest - fls.el);
             
-            if d < 0.1
-                if obj.freezePolicy == 3 || obj.freezePolicy == 2
-                    fls.freeze = 1;
-                    obj.histNeighbors = [obj.histNeighbors obj.neighbor];
-                end
-                success = 0;
-                return;
-            end
+%             if d < 0.1
+%                 if obj.freezePolicy == 3 || obj.freezePolicy == 2
+%                     fls.freeze = 1;
+%                     obj.histNeighbors = [obj.histNeighbors obj.neighbor];
+%                 end
+%                 success = 0;
+%                 return;
+%             end
 
             obj.lastConf = fls.confidence;
             

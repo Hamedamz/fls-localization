@@ -1,5 +1,5 @@
 function plotResults(T, fig, varargin)
-figure(fig)
+% figure(4)
 
 A = varargin{1};
 
@@ -7,7 +7,6 @@ x=1:size(A,2);
 
 extraInputs = {'interpreter','latex','fontsize',18};
 
-axes('Xlim', [1,36], 'XTick', 1:2:36, 'NextPlot', 'add');
 
 % t=title(T);
 %xlabel('Point Cloud ID',extraInputs{:})
@@ -45,10 +44,12 @@ styles = {'-k+', '-mx', '-c*', '-go'};
 
 for i = 1:floor((nargin-2)/2)
     plot(1:size(varargin{2*i-1},2),varargin{2*i - 1}, styles{i}, 'LineWidth', 1.5,'DisplayName',varargin{2*i})
-    hold on 
+    grid on
+%     hold on 
 end
 
-hold off
+% hold off
+% axes('Xlim', [1,28], 'XTick', 1:2:36);
 
 
 end

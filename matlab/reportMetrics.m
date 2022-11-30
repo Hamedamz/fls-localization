@@ -16,11 +16,13 @@ for i = 1:size(flss, 2)
             continue;
         end
 
-        gtd = norm(flss(i).gtl - flss(j).gtl);
-        ed = norm(flss(i).el - flss(j).el);
+        gtd = flss(i).gtl - flss(j).gtl;
+        ed = flss(i).el - flss(j).el;
 
-        d = d + abs(ed - gtd);
+        d = d + norm(ed - gtd);
     end
+
+    d = d / (j-1);
 
     sum = sum + d;
 
@@ -60,6 +62,7 @@ cavg = csum / i;
 
 % dH = hausdorff([flss.gtl], [flss.el]);
 
-s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, cmin, cavg, cmax, totalTraveled, numFLSMoved, maxTime);
+% s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, cmin, cavg, cmax, totalTraveled, numFLSMoved, maxTime);
+s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, totalTraveled, numFLSMoved, maxTime);
 end
 

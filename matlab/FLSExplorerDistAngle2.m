@@ -1,4 +1,4 @@
-classdef FLSExplorerDistAngle < FLSExplorer
+classdef FLSExplorerDistAngle2 < FLSExplorer
     methods
         function obj = FLSExplorerDistAngle(freezePolicy)
             obj.freezePolicy = freezePolicy;
@@ -12,36 +12,37 @@ classdef FLSExplorerDistAngle < FLSExplorer
             obj.i = 0;
             obj.bestIndex = 0;
 
-            neighbors = fls.elNeighbors;
-            n = size(fls.elNeighbors, 2);
-            if n < 1
-                fprintf("ERROR distangle failed %s: no neighbors\n", fls.id);
-                success = 0;
-                return;
-            end
-
-            found = 0;
-            for i = 1:n
-                [N, k] = getMostConfident(neighbors);
-    
-                if any(ismember(obj.histNeighbors, N))
-                    neighbors(k) = [];
-                else
-                    found = 1;
-                end
-            end
-
-            if ~found
-                fprintf("ERROR distangle failed %s: no new neighbors\n", fls.id);
-                obj.histNeighbors = [];
-                success = 0;
-                return;
-            end
+%             neighbors = fls.elNeighbors;
+%             n = size(fls.elNeighbors, 2);
+%             if n < 1
+%                 fprintf("ERROR distangle failed %s: no neighbors\n", fls.id);
+%                 success = 0;
+%                 return;
+%             end
+% 
+%             found = 0;
+%             for i = 1:n
+%                 [N, k] = getMostConfident(neighbors);
+%     
+%                 if any(ismember(obj.histNeighbors, N))
+%                     neighbors(k) = [];
+%                 else
+%                     found = 1;
+%                 end
+%             end
+% 
+%             if ~found
+%                 fprintf("ERROR distangle failed %s: no new neighbors\n", fls.id);
+%                 obj.histNeighbors = [];
+%                 success = 0;
+%                 return;
+%             end
 
 %             rp = randperm(n);
 %             rp = rp(1);
 %             N = fls.gtlNeighbors(rp);
 
+            N = fls.elNeighbors(1);
 
             [phi, theta] = getVectorAngleX(N.el, fls.el);
 
