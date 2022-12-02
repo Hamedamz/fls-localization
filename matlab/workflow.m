@@ -11,7 +11,7 @@ explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilatera
 % distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
 distType = 1;
 addAngleError = -Prompt("Add error to angle estimation?", {"Yes", "No"}, 2).getUserInput() + 2;
-freezePolicy = Prompt("When to freeze an FLS?", {"Don't freeze", "After each movement", "When it wants to move with a zero vector"}, 1).getUserInput();
+freezePolicy = Prompt("When to freeze an FLS?", {"Don't freeze", "After each movement", "When it wants to move with a zero vector"}, 2).getUserInput();
 swarmEnabled = -Prompt("Enable swarm?", {"Yes", "No"}, 1).getUserInput() + 2;
 if swarmEnabled
     swarmPolicy = Prompt("How should a swarm move?", {"Only one FLS in a swarm may move in a round", "Each swarm member moves using the first recieved vector"}, 1).getUserInput();
@@ -34,7 +34,7 @@ else
 end
 
 
-fixN = Prompt("Assign random neighbors?", {"Yes", "No"}, 2).getUserInput();
+fixN = Prompt("Assign closest neighbors in each round?", {"Yes", "No"}, 1).getUserInput();
 
 if fixN == 1
     fixN = Prompt("Input the minimum number of neighbors?", {}, 1).getDirectInput();
@@ -128,5 +128,5 @@ for i=1:1
         p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
     end
 
-    flss = main2(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
+    flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
 end

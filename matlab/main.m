@@ -1,4 +1,4 @@
-function flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, ff)
+function [flss, pltResults, j] = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, ff)
 
 rng('default');
 rng(1);
@@ -67,9 +67,9 @@ end
 
 
 grid on
-plotScreen([flss.gtl], 'blue', 3*ff+1);
-
-plotScreen([flss.el], 'red', 3*ff+2);
+% plotScreen([flss.gtl], 'blue', 3*ff+1);
+% 
+% plotScreen([flss.el], 'red', 3*ff+2);
 % text2 = reportMetrics(flss);
 % txt = sprintf("%s\n", text2);
 % annotation('textbox',[.9 .7 .1 .2], ...
@@ -77,9 +77,12 @@ plotScreen([flss.el], 'red', 3*ff+2);
 
 % h = hausdorff([flss.gtl], [flss.el]);
 % return;
-figure(3*ff+3);
+% figure(3*ff+3);
 
-pltResults = zeros(26, rounds);
+% return;
+
+pltResults = zeros(27, rounds);
+tries = 0;
 
 for j=1:rounds
     terminate = 0;
@@ -103,12 +106,7 @@ for j=1:rounds
     numFrozen = sum([flss.freeze]);
     fprintf('  %d FLS(s) are frozen\n', numFrozen);
 
-%     dH = hausdorff([flss.gtl], [flss.el]);
-%     if dH < .4
-%         break
-%     end
-
-    if ~fixN || (fixN && j == 1)
+    
         sumN = 0;
         maxN = -Inf;
         minN = Inf;
@@ -120,12 +118,6 @@ for j=1:rounds
                 fls.adjustCR();
             elseif fixN
                 fls.computeNeighbors(flss);
-%                 if i == 1
-%                     k = 1;
-%                 else
-%                     k = i - 1;
-%                 end
-%                 fls.celNeighbors = [flss(1)];
             end
     
             n = size(fls.elNeighbors, 2);
@@ -144,12 +136,11 @@ for j=1:rounds
         pltResults(21,j) = maxN;
 
         
-    end
     
 
     candidateExplorers = selectCandidateExplorers(flss);
     numCandidate = size(candidateExplorers, 2);
-    fprintf('  %d FLS(s) are less than 95 percent confident\n', numCandidate);
+    fprintf('  %d FLS(s) are less than 100 percent confident\n', numCandidate);
 
     if size(candidateExplorers, 2) < 1
         disp('  no FLSs is selected to move')
@@ -277,7 +268,6 @@ for j=1:rounds
         pltResults(2,j) = count;
         pltResults(3,j) = sumD / size(flss, 2);
         pltResults(4,j) = maxD;
-%         pltResults(5,j) = hausdorff([flss.gtl], [flss.el]);
         pltResults(6,j) = sum([flss.confidence]) / size(flss,2);
         pltResults(7,j) = numCandidate;
         pltResults(8,j) = numConcurrent;
@@ -313,20 +303,35 @@ for j=1:rounds
             fprintf('   min: %f\n   avg %f\n   max %f\n', minD, sumD/count, maxD);
         end
 
-%     if numSwarms == 1
-%         disp('all FLSs are in one swarm')
-%         break;
-%     end
+
     s = fls.swarm.getAllMembers([]);
-    if size(s,2) == size(flss,2)
-        disp('all FLSs are in one swarm')
-        break;
-    end
+    allInOneSwarm = size(s,2) == size(flss,2);
 
-    if terminate
-        break;
-    end
+    if allInOneSwarm || terminate
+        dH = hausdorff([flss.gtl], [flss.el]);
+        fprintf("Hausdorff Distance: %f\n", dH);
 
+        tries = 1 + tries;
+
+        pltResults(5,tries) = dH;
+
+        if dH < 0.5 || tries == 5
+            if allInOneSwarm 
+                disp('all FLSs are in one swarm');
+            else
+                for i = 1:size(flss,2)
+                    flss(1).swarm.addMember(flss(i));
+                    flss(i).swarm.addMember(flss(1));
+                end
+            end
+            break;
+        else
+            % reset swarms
+            for i = 1:size(flss,2)
+                flss(i).swarm.members = [];
+            end
+        end
+    end
 end
 
 if clear
@@ -334,6 +339,14 @@ if clear
 end
 
 
+for k=1:size(pltResults,1)
+    for i=j:rounds
+        pltResults(k,i) = pltResults(k,j);
+    end
+end
+
+
+% 
 text1 = sprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\nrounds: %d",pltResults(19,1),pltResults(20,1),pltResults(21,1), j);
 
 
@@ -341,40 +354,41 @@ text2 = reportMetrics(flss);
 
 dH = hausdorff([flss.gtl], [flss.el]);
 txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", text1, text2, dH);
-
+% 
+figure(3*ff+3);
 plotScreen([flss.el], 'black', 3*ff+3)
-annotation('textbox',[.9 .7 .1 .2], ...
+annotation('textbox',[.67 .7 .2 .2], ...
     'String',txt,'EdgeColor','none')
 
-switch ff
-    case 0
-    result1 = pltResults;
-    save('result1.mat','result1');
-    
-    case 1
-    result2 = pltResults;
-    save('result2.mat','result2');
-
-    case 2
-    result3 = pltResults;
-    save('result3.mat','result3');
-
-    case 3
-    result4 = pltResults;
-    save('result4.mat','result4');
-
-    case 4
-    result5 = pltResults;
-    save('result5.mat','result5');
-
-    case 5
-    result6 = pltResults;
-    save('result6.mat','result6');
-
-    case 6
-    result7 = pltResults;
-    save('result7.mat','result7');
-end
+% switch ff
+%     case 0
+%     result1 = pltResults;
+%     save('result1.mat','result1');
+%     
+%     case 1
+%     result2 = pltResults;
+%     save('result2.mat','result2');
+% 
+%     case 2
+%     result3 = pltResults;
+%     save('result3.mat','result3');
+% 
+%     case 3
+%     result4 = pltResults;
+%     save('result4.mat','result4');
+% 
+%     case 4
+%     result5 = pltResults;
+%     save('result5.mat','result5');
+% 
+%     case 5
+%     result6 = pltResults;
+%     save('result6.mat','result6');
+% 
+%     case 6
+%     result7 = pltResults;
+%     save('result7.mat','result7');
+% end
 
 end
 

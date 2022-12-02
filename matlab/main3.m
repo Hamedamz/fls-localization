@@ -1,51 +1,51 @@
-function flss = main2(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, ff)
+function flss = main3(flss, clear, rounds, ff)
 
 rng('default');
 rng(1);
 
-flss = FLS.empty(size(pointCloud, 2), 0);
-screen = containers.Map('KeyType','char','ValueType','any');
-dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
-
-distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
-ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingMaxR() FLSRatingAvgR() FLSRatingRandom() FLSRatingMissingNeighbors()};
-
-
-for i = 1:size(pointCloud, 2)
-    point = pointCloud(:,i);
-    dispatcher = selectDispatcher(point, dispatchers);
-
-    switch explorerType
-        case 1
-            explorer = FLSExplorerTriangulation(freezePolicy);
-        case 2
-            explorer = FLSExplorerTrilateration(freezePolicy);
-        case 3
-            explorer = FLSExplorerTriangulation(freezePolicy);
-        case 4
-            explorer = FLSExplorerDistAngle2(freezePolicy);
-        case 5
-            explorer = FLSExplorerDistAngleAvg(freezePolicy);
-        case 6
-            explorer = FLSExplorerLoGlo(freezePolicy);
-    end
-
-    confidenceModel = ratingSet{5};
-    weightModel = ratingSet{5};
-    distModel = distModelSet{distType};
-    swarm = FLSSwarm(swarmEnabled, swarmPolicy);
-
-    fls = FLS(dispatcher.coord, point, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, 1, screen);
-    flss(i) = fls;
-    fls.flyTo(point);
-    fls.lastD = 0;
-    fls.locked = 0;
-    fls.distanceTraveled = 0;
-    if removeAlpha
-        fls.alpha = 0;
-    end
-    screen(fls.id) = fls;
-end
+% flss = FLS.empty(size(pointCloud, 2), 0);
+% screen = containers.Map('KeyType','char','ValueType','any');
+% dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
+% 
+% distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
+% ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingMaxR() FLSRatingAvgR() FLSRatingRandom() FLSRatingMissingNeighbors()};
+% 
+% 
+% for i = 1:size(pointCloud, 2)
+%     point = pointCloud(:,i);
+%     dispatcher = selectDispatcher(point, dispatchers);
+% 
+%     switch explorerType
+%         case 1
+%             explorer = FLSExplorerTriangulation(freezePolicy);
+%         case 2
+%             explorer = FLSExplorerTrilateration(freezePolicy);
+%         case 3
+%             explorer = FLSExplorerTriangulation(freezePolicy);
+%         case 4
+%             explorer = FLSExplorerDistAngle2(freezePolicy);
+%         case 5
+%             explorer = FLSExplorerDistAngleAvg(freezePolicy);
+%         case 6
+%             explorer = FLSExplorerLoGlo(freezePolicy);
+%     end
+% 
+%     confidenceModel = ratingSet{5};
+%     weightModel = ratingSet{5};
+%     distModel = distModelSet{distType};
+%     swarm = FLSSwarm(swarmEnabled, swarmPolicy);
+% 
+%     fls = FLS(dispatcher.coord, point, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, 1, screen);
+%     flss(i) = fls;
+%     fls.flyTo(point);
+%     fls.lastD = 0;
+%     fls.locked = 0;
+%     fls.distanceTraveled = 0;
+%     if removeAlpha
+%         fls.alpha = 0;
+%     end
+%     screen(fls.id) = fls;
+% end
 
 
 grid on
@@ -59,10 +59,6 @@ pltResults = zeros(26, rounds);
 
 tries = 0;
 
-% figure(4);
-% s=scatter(pointCloud(1,:), pointCloud(2,:), 'red', 'filled');
-% axis square;
-
 for j=1:rounds
     terminate = 0;
     if clear
@@ -72,10 +68,9 @@ for j=1:rounds
     plotScreen([flss.el], 'red', 3*ff+3);
     hold on
 
-
     fprintf('\nROUND %d:\n', j);
 
-    concurrentExplorers = selectConcurrentExplorers3(flss);
+    concurrentExplorers = selectConcurrentExplorers4(flss);
     numConcurrent = size(concurrentExplorers, 2);
     fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
 
@@ -177,22 +172,8 @@ for j=1:rounds
         dH = hausdorff([flss.gtl], [flss.el]);
         fprintf("Hausdorff Distance: %f\n", dH);
 
-        tries = 1 + tries;
-        if dH < 0.01
-            break
-        end
-        if tries == 5
-            break;
-        end
-
-        for i = 1:size(flss,2)
-            flss(i).swarm.members = [];
-        end
+        break;
     end
-
-%     figure(4);
-%     set(s, 'XData', pointCloud(1,:), 'YData', pointCloud(2,:));
-%     s=scatter3(pointCloud(1,:), pointCloud(2,:), pointCloud(3,:), color, 'filled');
 
 end
 

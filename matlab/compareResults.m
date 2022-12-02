@@ -1,9 +1,9 @@
-function compareResults()
-    load('result1.mat', 'result1');
-%     load('result2.mat', 'result2');
-%     load('result3.mat', 'result3');
+function compareResults(result1, n)
+%     load('result1.mat', 'result1');
+% %     load('result2.mat', 'result2');
+% %     load('result3.mat', 'result3');
 
-    result1=result1(:,1:36);
+    result1=result1(:,1:n);
 %     result2=result2(:,1:27);
 %     result3=result3(:,1:31);
 

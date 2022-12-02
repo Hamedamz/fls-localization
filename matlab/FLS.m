@@ -7,10 +7,13 @@ classdef FLS < handle
         r
         alpha
         speed = 1
-        communicationRange = 1.85
+        communicationRange = 2.85
         crm
         fixN
         distanceTraveled = 0
+        d1 = 0
+        d2 = 0
+        d3 = 0
         lastD = 0
 
         confidenceModel
@@ -79,8 +82,8 @@ classdef FLS < handle
                     j = j / norm(j);
                 end
 
-%                 phi = rand(1) * 2 * pi;
-                phi = 0;
+                phi = rand(1) * 2 * pi;
+%                 phi = 0;
                 e = i * cos(phi) + j * sin(phi);
                 ve = v + e * rand(1) * obj.r;
                 nve = norm(ve);
@@ -246,6 +249,7 @@ classdef FLS < handle
                 end
 
                 allN = [N1 N2 N3 N4];
+                m = min(m, size(allN,2));
                 N = allN(1:m);
 
 %                 k = randperm(size(flss,2), m);

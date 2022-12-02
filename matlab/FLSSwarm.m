@@ -37,6 +37,7 @@ classdef FLSSwarm < handle
                     else
                         fls.swarm.enabled = 0;
                         fls.flyTo(fls.el + v);
+                        fls.d3 = fls.d3 + norm(v);
                         fls.swarm.enabled = 1;
                     end
                     count = count + 1;
