@@ -44,7 +44,7 @@ for i = 1:size(flss, 2)
 
     if flss(i).distanceTraveled > 0
         numFLSMoved = numFLSMoved + 1;
-        totalTraveled = totalTraveled + flss(i).distanceTraveled;
+        totalTraveled = totalTraveled + flss(i).distanceTraveled - flss(i).d3;
         totalTraveledPhysical = totalTraveledPhysical + flss(i).d1 + flss(i).d2 + flss(i).d3;
         distanceTraveledDeadReckoning = distanceTraveledDeadReckoning + flss(i).d2;
     end
@@ -65,6 +65,10 @@ avg = sum / i;
 cavg = csum / i;
 
 % dH = hausdorff([flss.gtl], [flss.el]);
+
+disp(cmin);
+disp(cavg);
+disp(cmax);
 
 % s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, cmin, cavg, cmax, totalTraveled, numFLSMoved, maxTime);
 s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\ntotalDistanceTraveled(SS): %f\ntotalDistanceTraveled(Physical): %f\ndistanceTraveledDeadReckoning(Physical): %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, totalTraveled, totalTraveledPhysical, distanceTraveledDeadReckoning, numFLSMoved, maxTime);

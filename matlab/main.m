@@ -77,7 +77,7 @@ grid on
 
 % h = hausdorff([flss.gtl], [flss.el]);
 % return;
-% figure(3*ff+3);
+figure(3*ff+3);
 
 % return;
 
@@ -263,11 +263,13 @@ for j=1:rounds
         [numSwarms, swarmPopulation] = reportSwarm(flss);
         fprintf('  %d swarm(s) with %s members exist\n', numSwarms, strjoin(string(swarmPopulation), ', '));
 
+        dH = hausdorff([flss.gtl], [flss.el]);
 
         pltResults(1,j) = numFrozen;
         pltResults(2,j) = count;
         pltResults(3,j) = sumD / size(flss, 2);
         pltResults(4,j) = maxD;
+        pltResults(5,j) = dH;
         pltResults(6,j) = sum([flss.confidence]) / size(flss,2);
         pltResults(7,j) = numCandidate;
         pltResults(8,j) = numConcurrent;
@@ -308,12 +310,10 @@ for j=1:rounds
     allInOneSwarm = size(s,2) == size(flss,2);
 
     if allInOneSwarm || terminate
-        dH = hausdorff([flss.gtl], [flss.el]);
+%         dH = hausdorff([flss.gtl], [flss.el]);
         fprintf("Hausdorff Distance: %f\n", dH);
 
         tries = 1 + tries;
-
-        pltResults(5,tries) = dH;
 
         if dH < 0.5 || tries == 5
             if allInOneSwarm 
@@ -360,35 +360,35 @@ plotScreen([flss.el], 'black', 3*ff+3)
 annotation('textbox',[.67 .7 .2 .2], ...
     'String',txt,'EdgeColor','none')
 
-% switch ff
-%     case 0
-%     result1 = pltResults;
-%     save('result1.mat','result1');
-%     
-%     case 1
-%     result2 = pltResults;
-%     save('result2.mat','result2');
-% 
-%     case 2
-%     result3 = pltResults;
-%     save('result3.mat','result3');
-% 
-%     case 3
-%     result4 = pltResults;
-%     save('result4.mat','result4');
-% 
-%     case 4
-%     result5 = pltResults;
-%     save('result5.mat','result5');
-% 
-%     case 5
-%     result6 = pltResults;
-%     save('result6.mat','result6');
-% 
-%     case 6
-%     result7 = pltResults;
-%     save('result7.mat','result7');
-% end
+switch ff
+    case 0
+    result1 = pltResults;
+    save('result1.mat','result1');
+    
+    case 1
+    result2 = pltResults;
+    save('result2.mat','result2');
+
+    case 2
+    result3 = pltResults;
+    save('result3.mat','result3');
+
+    case 3
+    result4 = pltResults;
+    save('result4.mat','result4');
+
+    case 4
+    result5 = pltResults;
+    save('result5.mat','result5');
+
+    case 5
+    result6 = pltResults;
+    save('result6.mat','result6');
+
+    case 6
+    result7 = pltResults;
+    save('result7.mat','result7');
+end
 
 end
 

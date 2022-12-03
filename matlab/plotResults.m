@@ -45,7 +45,7 @@ styles = {'-k+', '-mx', '-c*', '-go'};
 for i = 1:floor((nargin-2)/2)
     plot(1:size(varargin{2*i-1},2),varargin{2*i - 1}, styles{i}, 'LineWidth', 1.5,'DisplayName',varargin{2*i})
     grid on
-%     hold on 
+    hold on 
 end
 
 % hold off

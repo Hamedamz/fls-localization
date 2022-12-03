@@ -45,7 +45,7 @@ end
 
 
 % rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
-rounds = 100;
+rounds = 200;
 
 save('config.mat','addAngleError', 'swarmPolicy', 'angleError');
 
@@ -87,12 +87,12 @@ shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", 
 
 
 
-for i=1:1
+for i=1:3
 %     shape = mod(ceil(i/3-1),2)+2;
 %     explorerType = 2^(mod(ceil(i/6)+1,3));
 %     alpha = 2*mod(i-1,3)+1;
-%     shape = 1;
-%     alpha = i*2-1;
+%     shape = 2;
+    alpha = i*2-1;
     switch shape
     case 1
         p = getPointCloudFromPNG("./assets/butterfly2.png");
