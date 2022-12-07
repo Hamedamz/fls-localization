@@ -8,7 +8,7 @@ screen = containers.Map('KeyType','char','ValueType','any');
 dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
 
 distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
-ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingMaxR() FLSRatingAvgR() FLSRatingRandom()};
+ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingM() FLSRatingX() FLSRatingRandom()};
 
 switch concurrentPolicy
     case 1
@@ -66,7 +66,7 @@ for i = 1:size(pointCloud, 2)
 end
 
 
-grid on
+% grid on
 % plotScreen([flss.gtl], 'blue', 3*ff+1);
 % 
 % plotScreen([flss.el], 'red', 3*ff+2);
@@ -77,21 +77,21 @@ grid on
 
 % h = hausdorff([flss.gtl], [flss.el]);
 % return;
-figure(3*ff+3);
 
 % return;
+
+h = plotScreen([flss.el], 'red', 2*ff+1);
 
 pltResults = zeros(27, rounds);
 tries = 0;
 
 for j=1:rounds
     terminate = 0;
-    if clear
-        clf
-    end
+%     if clear
+%         clf
+%     end
 
-    plotScreen([flss.el], 'red', 3*ff+3);
-    hold on
+    updateScreen(h, [flss.el]);
 
     fprintf('\nROUND %d:\n', j);
 
@@ -334,9 +334,6 @@ for j=1:rounds
     end
 end
 
-if clear
-    clf
-end
 
 
 for k=1:size(pltResults,1)
@@ -346,49 +343,20 @@ for k=1:size(pltResults,1)
 end
 
 
-% 
 text1 = sprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\nrounds: %d",pltResults(19,1),pltResults(20,1),pltResults(21,1), j);
-
 
 text2 = reportMetrics(flss);
 
 dH = hausdorff([flss.gtl], [flss.el]);
 txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", text1, text2, dH);
-% 
-figure(3*ff+3);
-plotScreen([flss.el], 'black', 3*ff+3)
+
+clf
+plotScreen([flss.el], 'black', 2*ff+1)
 annotation('textbox',[.67 .7 .2 .2], ...
-    'String',txt,'EdgeColor','none')
+    'String',txt,'EdgeColor','none');
 
-switch ff
-    case 0
-    result1 = pltResults;
-    save('result1.mat','result1');
-    
-    case 1
-    result2 = pltResults;
-    save('result2.mat','result2');
-
-    case 2
-    result3 = pltResults;
-    save('result3.mat','result3');
-
-    case 3
-    result4 = pltResults;
-    save('result4.mat','result4');
-
-    case 4
-    result5 = pltResults;
-    save('result5.mat','result5');
-
-    case 5
-    result6 = pltResults;
-    save('result6.mat','result6');
-
-    case 6
-    result7 = pltResults;
-    save('result7.mat','result7');
-end
+fileName = sprintf('result%d.mat', ff);
+save(fileName, 'pltResults');
 
 end
 

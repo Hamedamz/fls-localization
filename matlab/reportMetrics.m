@@ -66,11 +66,11 @@ cavg = csum / i;
 
 % dH = hausdorff([flss.gtl], [flss.el]);
 
-disp(cmin);
-disp(cavg);
-disp(cmax);
+% disp(cmin);
+% disp(cavg);
+% disp(cmax);
 
 % s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceExplored: %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, cmin, cavg, cmax, totalTraveled, numFLSMoved, maxTime);
-s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\ntotalDistanceTraveled(SS): %f\ntotalDistanceTraveled(Physical): %f\ndistanceTraveledDeadReckoning(Physical): %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, totalTraveled, totalTraveledPhysical, distanceTraveledDeadReckoning, numFLSMoved, maxTime);
+s=sprintf('Difference between EL and GTL:\n min: %f\n avg: %f\n max: %f\nConfidence:\n min: %f\n avg: %f\n max: %f\ntotalDistanceTraveled(SS): %f\ntotalDistanceTraveled(Physical): %f\ndistanceTraveledDeadReckoning(Physical): %f\nnumFLSsMoved: %d\nmaxTravelTime: %f\n', min, avg, max, cmin, cavg, cmax, totalTraveled, totalTraveledPhysical, distanceTraveledDeadReckoning, numFLSMoved, maxTime);
 end
 

@@ -35,6 +35,7 @@ classdef FLS < handle
         gtlNeighbors
         missingNeighbors
         erroneousNeighbors
+        correctNeighbors
 
         confidence
         weight
@@ -183,40 +184,46 @@ classdef FLS < handle
                 return;
             end
 
-            N = [];
-            d = floor(obj.communicationRange);
-            for i = -d:d
-                for j = -d:d
+            flss = obj.screen.values();
+            flss = [flss{:}];
+            out = getRS(obj, flss, obj.communicationRange);
+            obj.cgtlNeighbors = out;
 
-                    if obj.D == 3
-                        for k = -d:d
-                            if i == 0 && j == 0 && k == 0
-                                continue;
-                            end
-        
-                            nId = coordToId(obj.gtl + [i; j; k]);
-                            
-                            if isKey(obj.screen, nId)
-                                N = [N obj.screen(nId)];
-                            end
-                        end
-                    else
-                        if i == 0 && j == 0
-                            continue;
-                        end
-    
-                        nId = coordToId(obj.gtl + [i; j]);
-                        
-                        if isKey(obj.screen, nId)
-                            N = [N obj.screen(nId)];
-                        end
-                    end
-
-                end
-            end
-
-            out = N;
-            obj.cgtlNeighbors = N;
+% 
+%             N = [];
+%             d = floor(obj.communicationRange);
+%             for i = -d:d
+%                 for j = -d:d
+% 
+%                     if obj.D == 3
+%                         for k = -d:d
+%                             if i == 0 && j == 0 && k == 0
+%                                 continue;
+%                             end
+%         
+%                             nId = coordToId(obj.gtl + [i; j; k]);
+%                             
+%                             if isKey(obj.screen, nId)
+%                                 N = [N obj.screen(nId)];
+%                             end
+%                         end
+%                     else
+%                         if i == 0 && j == 0
+%                             continue;
+%                         end
+%     
+%                         nId = coordToId(obj.gtl + [i; j]);
+%                         
+%                         if isKey(obj.screen, nId)
+%                             N = [N obj.screen(nId)];
+%                         end
+%                     end
+% 
+%                 end
+%             end
+% 
+%             out = N;
+%             obj.cgtlNeighbors = N;
         end
 
         function computeNeighbors(obj, allflss)
@@ -227,40 +234,48 @@ classdef FLS < handle
                 B = [obj obj.celNeighbors];
                 flss = allflss(~ismember(allflss, B));
 
-                N1 = [];
-                N2 = [];
-                N3 = [];
-                N4 = [];
-                for i = 1:size(flss,2)
-                    d = norm(flss(i).el - obj.el);
-                    if d < 2.5
-                        N1 = [N1 flss(i)];
-                    elseif d < 5
-                        N2 = [N2 flss(i)];
-                    elseif d < 10
-                        N3 = [N3 flss(i)];
-                    else
-                        N4 = [N4 flss(i)];
-                    end
-                    if size(N1,2) == m
-                        N = N1;
-                        break;
-                    end
-                end
+                KNN = getKNN(obj, flss, m);
 
-                allN = [N1 N2 N3 N4];
-                m = min(m, size(allN,2));
-                N = allN(1:m);
+%                 N1 = [];
+%                 N2 = [];
+%                 N3 = [];
+%                 N4 = [];
+%                 for i = 1:size(flss,2)
+%                     d = norm(flss(i).el - obj.el);
+%                     if d < 2.5
+%                         N1 = [N1 flss(i)];
+%                     elseif d < 5
+%                         N2 = [N2 flss(i)];
+%                     elseif d < 10
+%                         N3 = [N3 flss(i)];
+%                     else
+%                         N4 = [N4 flss(i)];
+%                     end
+%                     if size(N1,2) == m
+%                         N = N1;
+%                         break;
+%                     end
+%                 end
+% 
+%                 allN = [N1 N2 N3 N4];
+%                 m = min(m, size(allN,2));
+%                 N = allN(1:m);
 
 %                 k = randperm(size(flss,2), m);
 %                 N = flss(k);
 
-                obj.celNeighbors = [obj.celNeighbors N];
+                obj.celNeighbors = [obj.celNeighbors KNN];
 
-                for i=1:size(N,2)
-                    if ~any(ismember(N(i).celNeighbors, obj))
-                       N(i).celNeighbors = [N(i).celNeighbors obj]; 
+                for i=1:size(KNN,2)
+                    if ~any(ismember(KNN(i).celNeighbors, obj))
+                       KNN(i).celNeighbors = [KNN(i).celNeighbors obj]; 
                     end
+                end
+
+                newR = max(vecnorm([obj.celNeighbors.el] - obj.el));
+                if newR ~= obj.communicationRange
+                    obj.communicationRange = newR;
+                    obj.cgtlNeighbors = [];
                 end
             end
         end
@@ -302,6 +317,10 @@ classdef FLS < handle
 
         function A = get.missingNeighbors(obj)
             A = setdiff(obj.gtlNeighbors, obj.elNeighbors);
+        end
+
+        function A = get.correctNeighbors(obj)
+            A = intersect(obj.gtlNeighbors, obj.elNeighbors);
         end
 
         function out = get.confidence(obj)

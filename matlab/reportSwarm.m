@@ -20,9 +20,9 @@ function [numSwarms, swarmPopulation, avgConf] = reportSwarm(flss)
             continue;
         end
 
-        swarm = fls.swarm.getAllMembers([]);
+        swarm = fls.swarm.getAllMembers([fls]);
         ns = size(swarm, 2);
-        if ns > 1
+        if ns >= 1
             numSwarms = numSwarms + 1;
             swarmPopulation(numSwarms) = ns;
             avgConf(numSwarms) = mean([swarm.confidence]);

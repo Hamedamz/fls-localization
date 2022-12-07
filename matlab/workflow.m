@@ -3,7 +3,7 @@ addpath cli/;
 
 
 
-confidenceType = Prompt("Select confidence method:", {"Signal Strength", "Max Radius", "Avg Radius", "Random"}, 2).getUserInput();
+confidenceType = Prompt("Select confidence method:", {"Signal Strength", "Confidence M", "Confidence X", "Random"}, 2).getUserInput();
 weightType = confidenceType;
 clear = 1;
 % clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
@@ -87,7 +87,7 @@ shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", 
 
 
 
-for i=1:3
+for i=3:3
 %     shape = mod(ceil(i/3-1),2)+2;
 %     explorerType = 2^(mod(ceil(i/6)+1,3));
 %     alpha = 2*mod(i-1,3)+1;

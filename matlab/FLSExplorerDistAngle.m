@@ -57,9 +57,9 @@ classdef FLSExplorerDistAngle < FLSExplorer
             V = D - dv;
             P = fls.el + V;
 
-            scatter(N.el(1), N.el(2), 'filled', 'blue')
-            scatter(fls.el(1), fls.el(2), 'filled', 'green')
-            scatter(P(1), P(2), 'green')
+%             scatter(N.el(1), N.el(2), 'filled', 'blue')
+%             scatter(fls.el(1), fls.el(2), 'filled', 'green')
+%             scatter(P(1), P(2), 'green')
 
             obj.wayPoints(:,1) = P;
             obj.neighbor = N;
