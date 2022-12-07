@@ -36,5 +36,6 @@ octave-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/matlab
 matlab/config.mat
+matlab/gif
 matlab/figs
 .DS_Store

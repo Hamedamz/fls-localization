@@ -85,13 +85,14 @@ h = plotScreen([flss.el], 'red', 2*ff+1);
 pltResults = zeros(27, rounds);
 tries = 0;
 
+gifName = sprintf('gif/exp%d.gif', ff);
+
 for j=1:rounds
     terminate = 0;
 %     if clear
 %         clf
 %     end
 
-    updateScreen(h, [flss.el]);
 
     fprintf('\nROUND %d:\n', j);
 
@@ -309,6 +310,9 @@ for j=1:rounds
     s = fls.swarm.getAllMembers([]);
     allInOneSwarm = size(s,2) == size(flss,2);
 
+    updateScreen(h, [flss.el]);
+    exportgraphics(gcf,gifName,'Append',true);
+    
     if allInOneSwarm || terminate
 %         dH = hausdorff([flss.gtl], [flss.el]);
         fprintf("Hausdorff Distance: %f\n", dH);
