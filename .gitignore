@@ -34,8 +34,8 @@ codegen/
 # Octave session info
 octave-workspace
 
-# End of https://www.toptal.com/developers/gitignore/api/matlab
-matlab/config.mat
-matlab/gif
-matlab/figs
+./matlab/config.mat
+./matlab/gif/*
+./matlab/figs/*
+./matlab/result*
 .DS_Store
