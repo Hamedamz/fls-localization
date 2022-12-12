@@ -12,36 +12,6 @@ classdef FLSExplorerDistAngle2 < FLSExplorer
             obj.i = 0;
             obj.bestIndex = 0;
 
-%             neighbors = fls.elNeighbors;
-%             n = size(fls.elNeighbors, 2);
-%             if n < 1
-%                 fprintf("ERROR distangle failed %s: no neighbors\n", fls.id);
-%                 success = 0;
-%                 return;
-%             end
-% 
-%             found = 0;
-%             for i = 1:n
-%                 [N, k] = getMostConfident(neighbors);
-%     
-%                 if any(ismember(obj.histNeighbors, N))
-%                     neighbors(k) = [];
-%                 else
-%                     found = 1;
-%                 end
-%             end
-% 
-%             if ~found
-%                 fprintf("ERROR distangle failed %s: no new neighbors\n", fls.id);
-%                 obj.histNeighbors = [];
-%                 success = 0;
-%                 return;
-%             end
-
-%             rp = randperm(n);
-%             rp = rp(1);
-%             N = fls.gtlNeighbors(rp);
-
             N = fls.elNeighbors(1);
 
             [phi, theta] = getVectorAngleX(N.el, fls.el);
@@ -65,20 +35,20 @@ classdef FLSExplorerDistAngle2 < FLSExplorer
             obj.wayPoints(:,1) = P;
             obj.neighbor = N;
             
-            D1 = N.el - fls.el;
+            D1 = [N.el] - fls.el;
 
             dx = sign(D1(1));
             if dx == 0
                 dx = 1;
             end
             if fls.D == 3
-                D1 = D1 - [dx*0.1 0 0];
+                D1 = D1 - [dx*0.1; 0; 0];
             else
-                D1 = D1 - [dx*0.1 0];
+                D1 = D1 - [dx*0.1; 0];
             end
 
-            obj.d1 = norm(D1);
-            obj.d2 = norm(P - fls.el - D1);
+            obj.d1 = D1;
+            obj.d2 = P - fls.el - D1;
             
             success = 1;
         end

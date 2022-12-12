@@ -1,5 +1,9 @@
 function KNN = getKNN(fls, flss, k)
-    Idx = knnsearch([flss.el].',[fls.el].', 'K', k);
-    KNN = flss(Idx);
+    if size(flss,2)
+        Idx = knnsearch([flss.el].',[fls.el].', 'K', k);
+        KNN = flss(Idx);
+    else
+        KNN = [];
+    end
 end
 

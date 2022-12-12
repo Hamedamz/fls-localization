@@ -34,8 +34,9 @@ codegen/
 # Octave session info
 octave-workspace
 
-./matlab/config.mat
-./matlab/gif/*
-./matlab/figs/*
-./matlab/result*
+matlab/config.mat
+matlab/gif/
+matlab/figs/
+matlab/result*.mat
 .DS_Store
+

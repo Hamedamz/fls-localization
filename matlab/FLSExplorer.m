@@ -49,10 +49,23 @@ classdef FLSExplorer < handle
 %             end
 
             obj.lastConf = fls.confidence;
+
+            if fls.physical
+%                 fls.flyTo(fls.el + obj.d1);
+%                 fls.flyTo(fls.el + obj.d2);
+                v = dest - fls.el;
+                fls.swarm.enabled = 0;
+                fls.el = fls.el + obj.d1;
+                fls.flyTo(fls.el + obj.d2);
+                fls.swarm.enabled = 1;
+                fls.swarm.follow(fls, v);
+            else
+                fls.flyTo(dest);
+            end
             
-            fls.flyTo(dest);
-            fls.d1 = fls.d1 + obj.d1;
-            fls.d2 = fls.d2 + obj.d2;
+            
+            fls.d1 = fls.d1 + norm(obj.d1);
+            fls.d2 = fls.d2 + norm(obj.d2);
 
             if obj.neighbor ~= 0
                 fls.swarm.addMember(obj.neighbor);

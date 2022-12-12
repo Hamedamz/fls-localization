@@ -1,74 +1,23 @@
-function flss = main3(flss, clear, rounds, ff)
-
-rng('default');
-rng(1);
-
-% flss = FLS.empty(size(pointCloud, 2), 0);
-% screen = containers.Map('KeyType','char','ValueType','any');
-% dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
+function flss = main3(flss, rounds, ff)
 % 
-% distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
-% ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingMaxR() FLSRatingAvgR() FLSRatingRandom() FLSRatingMissingNeighbors()};
-% 
-% 
-% for i = 1:size(pointCloud, 2)
-%     point = pointCloud(:,i);
-%     dispatcher = selectDispatcher(point, dispatchers);
-% 
-%     switch explorerType
-%         case 1
-%             explorer = FLSExplorerTriangulation(freezePolicy);
-%         case 2
-%             explorer = FLSExplorerTrilateration(freezePolicy);
-%         case 3
-%             explorer = FLSExplorerTriangulation(freezePolicy);
-%         case 4
-%             explorer = FLSExplorerDistAngle2(freezePolicy);
-%         case 5
-%             explorer = FLSExplorerDistAngleAvg(freezePolicy);
-%         case 6
-%             explorer = FLSExplorerLoGlo(freezePolicy);
-%     end
-% 
-%     confidenceModel = ratingSet{5};
-%     weightModel = ratingSet{5};
-%     distModel = distModelSet{distType};
-%     swarm = FLSSwarm(swarmEnabled, swarmPolicy);
-% 
-%     fls = FLS(dispatcher.coord, point, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, 1, screen);
-%     flss(i) = fls;
-%     fls.flyTo(point);
-%     fls.lastD = 0;
-%     fls.locked = 0;
-%     fls.distanceTraveled = 0;
-%     if removeAlpha
-%         fls.alpha = 0;
-%     end
-%     screen(fls.id) = fls;
-% end
+% rng('default');
+% rng(1);
 
-
-grid on
-plotScreen([flss.gtl], 'blue', 3*ff+1);
-
-plotScreen([flss.el], 'red', 3*ff+2);
-
-figure(3*ff+3);
 
 pltResults = zeros(26, rounds);
 
 tries = 0;
 
+figure(2*ff-1)
+clf
+plotScreen([flss.el], 'red', 2*ff-1);
+% axis([0 30 0 30])
+% view([0 90])
+
 for j=1:rounds
     terminate = 0;
-    if clear
-        clf
-    end
 
-    plotScreen([flss.el], 'red', 3*ff+3);
-    hold on
-
-    fprintf('\nROUND %d:\n', j);
+    fprintf('\nMERGING ROUND %d:\n', j);
 
     concurrentExplorers = selectConcurrentExplorers4(flss);
     numConcurrent = size(concurrentExplorers, 2);
@@ -166,20 +115,14 @@ for j=1:rounds
 
     fprintf('  %d FLS(s) moved\n', count);
 
-    s = fls.swarm.getAllMembers([]);
-    if size(s,2) == size(flss,2)
-        disp('all FLSs are in one swarm')
-        dH = hausdorff([flss.gtl], [flss.el]);
-        fprintf("Hausdorff Distance: %f\n", dH);
 
+    if numSwarms == 1 && swarmPopulation(1) == length(flss)
+        disp('all FLSs are in one swarm')
         break;
     end
 
 end
 
-if clear
-    clf
-end
 
 text1 = sprintf("rounds: %d\nnumber of swarm resets: %d\n", j, tries-1);
 
@@ -191,39 +134,18 @@ text2 = reportMetrics(flss);
 dH = hausdorff([flss.gtl], [flss.el]);
 txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", text1, text2, dH);
 
-plotScreen([flss.el], 'black', 3*ff+3)
+fprintf("End of round %d\nMerged cubes\n%s\n", ff, txt);
+
+figure(2*ff)
+clf
+plotScreen([flss.el], 'black', 2*ff);
 annotation('textbox',[.7 .7 .1 .2], ...
     'String',txt,'EdgeColor','none')
+% axis([0 30 0 30])
+% view([0 90])
 
-switch ff
-    case 0
-    result1 = pltResults;
-    save('result1.mat','result1');
-    
-    case 1
-    result2 = pltResults;
-    save('result2.mat','result2');
-
-    case 2
-    result3 = pltResults;
-    save('result3.mat','result3');
-
-    case 3
-    result4 = pltResults;
-    save('result4.mat','result4');
-
-    case 4
-    result5 = pltResults;
-    save('result5.mat','result5');
-
-    case 5
-    result6 = pltResults;
-    save('result6.mat','result6');
-
-    case 6
-    result7 = pltResults;
-    save('result7.mat','result7');
-end
+% fileName = sprintf('resultCube%d.mat', ff);
+% save(fileName, 'pltResults');
 
 end
 

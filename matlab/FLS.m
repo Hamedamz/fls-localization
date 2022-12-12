@@ -27,6 +27,7 @@ classdef FLS < handle
 
         freeze = 0
         locked = 0
+        physical = 0
         D
     end
 
@@ -44,7 +45,7 @@ classdef FLS < handle
     end
 
     methods
-        function obj = FLS(el, gtl, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, fixN, screen)
+        function obj = FLS(el, gtl, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, fixN, physical, screen)
             obj.id = coordToId(gtl);
             obj.el = el;
             obj.gtl = gtl;
@@ -58,6 +59,7 @@ classdef FLS < handle
             obj.alpha = alpha / 180 * pi;
             obj.crm = crm;
             obj.fixN = fixN;
+            obj.physical = physical;
         end
 
         function ve = addErrorToVector(obj, v)
@@ -272,6 +274,9 @@ classdef FLS < handle
                     end
                 end
 
+                if size(obj.celNeighbors, 2) == 0
+                    return;
+                end
                 newR = max(vecnorm([obj.celNeighbors.el] - obj.el));
                 if newR ~= obj.communicationRange
                     obj.communicationRange = newR;

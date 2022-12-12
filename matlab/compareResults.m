@@ -1,22 +1,32 @@
-function compareResults()
-    load('result1.mat', 'result1');
-    load('result2.mat', 'result2');
-    load('result3.mat', 'result3');
+function compareResults(fig)
+    
+    load('result0.mat', 'pltResults');
+    result1=pltResults(:,1:200);
 
-    result1=result1(:,1:200);
-    result2=result2(:,1:200);
-    result3=result3(:,1:200);
+    load('result1.mat', 'pltResults');
+    result2=pltResults(:,1:200);
+    
+    load('result2.mat', 'pltResults');
+    result3=pltResults(:,1:200);
 
 
-
+figure(fig);
 %     plotResults('Number of localizing FLSs', 14, result1(8,:), '\epsilon=5^{\circ}');
-    subplot(3,1,1)    
-plotResults('Number of swarms', 17, result1(14,:), '\epsilon=1^{\circ}', result2(14,:), '\epsilon=3^{\circ}', result3(14,:), '\epsilon=5^{\circ}');
-       subplot(3,1,2)
- plotResults('Average error of ptcld ', 19, result1(25,:), '\epsilon=1^{\circ}', result2(25,:), '\epsilon=3^{\circ}', result3(25,:), '\epsilon=5^{\circ}');
-       subplot(3,1,3)
-plotResults('Hd ', 19, result1(5,:), '\epsilon=1^{\circ}', result2(5,:), '\epsilon=3^{\circ}', result3(5,:), '\epsilon=5^{\circ}');
+% subplot(3,1,1)    
+% plotResults('Number of swarms', 17, result1(14,:), '\epsilon=1^{\circ}', result2(14,:), '\epsilon=3^{\circ}', result3(14,:), '\epsilon=5^{\circ}');
+% subplot(3,1,2)
+% plotResults('Average error of ptcld ', 19, result1(25,:), '\epsilon=1^{\circ}', result2(25,:), '\epsilon=3^{\circ}', result3(25,:), '\epsilon=5^{\circ}');
+% subplot(3,1,3)
+% plotResults('Hd ', 19, result1(5,:), '\epsilon=1^{\circ}', result2(5,:), '\epsilon=3^{\circ}', result3(5,:), '\epsilon=5^{\circ}');
 
+subplot(3,1,1)    
+plotResults('Number of swarms', 17, result1(14,:), 'butterfly', result2(14,:), 'cat', result3(14,:), 'teapot');
+subplot(3,1,2)
+plotResults('Average error of ptcld ', 19, result1(25,:), 'butterfly', result2(25,:), 'cat', result3(25,:), 'teapot');
+subplot(3,1,3)
+plotResults('Hd ', 19, result1(5,:), 'butterfly', result2(5,:), 'cat', result3(5,:), 'teapot');
+
+legend('butterfly', 'cat', 'teapot');
 %  plotResults('Average confidence of FLSs ', 20, result1(26,:), '\epsilon=5^{\circ}');
 
 
@@ -36,7 +46,7 @@ plotResults('Hd ', 19, result1(5,:), '\epsilon=1^{\circ}', result2(5,:), '\epsil
 %     plotResults('Average distance moved by Localizing FLSs', 12, result1(23,:), '\epsilon=1^{\circ}', result2(23,:), '\epsilon=3^{\circ}', result3(23,:), '\epsilon=5^{\circ}');
 %     plotResults('Average distance moved by swarm FLSs', 13, result1(24,:), '\epsilon=1^{\circ}', result2(24,:), '\epsilon=3^{\circ}', result3(24,:), '\epsilon=5^{\circ}');
 %     axis([1 33 0 4])
-    plotResults('Number of localizing FLSs', 14, result1(8,:), '\epsilon=1^{\circ}', result2(8,:), '\epsilon=3^{\circ}', result3(8,:), '\epsilon=5^{\circ}');
+%     plotResults('Number of localizing FLSs', 14, result1(8,:), '\epsilon=1^{\circ}', result2(8,:), '\epsilon=3^{\circ}', result3(8,:), '\epsilon=5^{\circ}');
 %     plotResults('Number of shared anchored FLSs', 15, result1(22,:), '\epsilon=1^{\circ}', result2(22,:), '\epsilon=3^{\circ}', result3(22,:), '\epsilon=5^{\circ}');
 %     plotResults('Number of stationary FLSs', 16, 997-result1(8,:), '\epsilon=1^{\circ}', 997-result2(8,:), '\epsilon=3^{\circ}', 977-result3(8,:), '\epsilon=5^{\circ}');
 %     plotResults('Number of swarms', 17, result1(14,:), '\epsilon=1^{\circ}', result2(14,:), '\epsilon=3^{\circ}', result3(14,:), '\epsilon=5^{\circ}');

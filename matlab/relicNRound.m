@@ -1,4 +1,4 @@
-function [flss, pltResults, j] = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, ff)
+function [terminate, pltResults, j] = relicNRound(flss, rounds, ff)
 
 updatePlot = 0;
 saveGif = updatePlot && 0;
@@ -6,70 +6,8 @@ showInitialPlots = 0;
 showFinalPlot = 0;
 saveResults = 0;
 
-rng('default');
-rng(1);
 
-flss = FLS.empty(size(pointCloud, 2), 0);
-screen = containers.Map('KeyType','char','ValueType','any');
-dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
-
-distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
-ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingM() FLSRatingX() FLSRatingRandom()};
-
-switch concurrentPolicy
-    case 1
-        concurrentSelector = @selectConcurrentExplorers;
-    case 2
-        concurrentSelector = @selectConcurrentExplorers2;
-end
-
-% ratingSet = containers.Map( ...
-%     {'distTraveled', 'distGTL', 'distNormalizedGTL', 'obsGTLN', 'mN', 'eN', 'hN'}, ...
-%     {FLSRatingDistanceTraveled(), ...
-%     FLSRatingDistanceGTL(), ...
-%     FLSRatingNormalizedDistanceGTL(), ...
-%     FLSRatingObsGTLNeighbors(), ...
-%     FLSRatingMissingNeighbors(), ...
-%     FLSRatingErroneousNeighbors(), ...
-%     FLSRatingNeighbors(.5, .5)} ...
-%     );
-
-
-for i = 1:size(pointCloud, 2)
-    point = pointCloud(:,i);
-    dispatcher = selectDispatcher(point, dispatchers);
-
-    switch explorerType
-        case 1
-            explorer = FLSExplorerTriangulation(freezePolicy);
-        case 2
-            explorer = FLSExplorerTrilateration(freezePolicy);
-        case 3
-            explorer = FLSExplorerTriangulation(freezePolicy);
-        case 4
-            explorer = FLSExplorerDistAngle(freezePolicy);
-        case 5
-            explorer = FLSExplorerDistAngleAvg(freezePolicy);
-        case 6
-            explorer = FLSExplorerLoGlo(freezePolicy);
-    end
-
-    confidenceModel = ratingSet{confidenceType};
-    weightModel = ratingSet{weightType};
-    distModel = distModelSet{distType};
-    swarm = FLSSwarm(swarmEnabled, swarmPolicy);
-
-    fls = FLS(dispatcher.coord, point, alpha, weightModel, confidenceModel, distModel, explorer, swarm, crm, fixN, physical, screen);
-    flss(i) = fls;
-    fls.flyTo(point);
-    fls.lastD = 0;
-    fls.locked = 0;
-    fls.distanceTraveled = 0;
-    if removeAlpha
-        fls.alpha = 0;
-    end
-    screen(fls.id) = fls;
-end
+concurrentSelector = @selectConcurrentExplorers;
 
 
 if showInitialPlots
@@ -92,7 +30,7 @@ pltResults = zeros(27, rounds);
 tries = 0;
 
 
-for j=1:rounds
+for j=ff*rounds+1:(ff+1)*rounds
     terminate = 0;
     fprintf('\nROUND %d:\n', j);
 
@@ -108,33 +46,30 @@ for j=1:rounds
     fprintf('  %d FLS(s) are frozen\n', numFrozen);
 
     
-    sumN = 0;
-    maxN = -Inf;
-    minN = Inf;
+%     sumN = 0;
+%     maxN = -Inf;
+%     minN = Inf;
     
     for i = 1:size(flss, 2)
         fls = flss(i);
 
-        if crm
-            fls.adjustCR();
-        elseif fixN
-            fls.computeNeighbors(flss);
-        end
 
-        n = size(fls.elNeighbors, 2);
+        fls.computeNeighbors(flss);
 
-        sumN = sumN + n;
-        if n > maxN
-            maxN = n;
-        end
-        if n < minN
-            minN = n;
-        end
+%         n = size(fls.elNeighbors, 2);
+
+%         sumN = sumN + n;
+%         if n > maxN
+%             maxN = n;
+%         end
+%         if n < minN
+%             minN = n;
+%         end
     end
 
-    pltResults(19,j) = minN;
-    pltResults(20,j) = sumN/size(flss, 2);
-    pltResults(21,j) = maxN;
+%     pltResults(19,j) = minN;
+%     pltResults(20,j) = sumN/size(flss, 2);
+%     pltResults(21,j) = maxN;
 
 
     candidateExplorers = selectCandidateExplorers(flss);
@@ -339,11 +274,11 @@ end
 
 
 
-for k=1:size(pltResults,1)
-    for i=j:rounds
-        pltResults(k,i) = pltResults(k,j);
-    end
-end
+% for k=1:size(pltResults,1)
+%     for i=j:rounds
+%         pltResults(k,i) = pltResults(k,j);
+%     end
+% end
 
 
 % text1 = sprintf("Number of neighbors:\nmin: %d\navg: %f\nmax: %d\nrounds: %d",pltResults(19,1),pltResults(20,1),pltResults(21,1), j);
@@ -351,6 +286,7 @@ text2 = reportMetrics(flss);
 dH = hausdorff([flss.gtl], [flss.el]);
 txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", '', text2, dH);
 
+disp(txt);
 
 if showFinalPlot
     figure(3*ff+1);
@@ -358,6 +294,7 @@ if showFinalPlot
     plotScreen([flss.el], 'black', 3*ff+1);
     annotation('textbox',[.67 .7 .2 .2], ...
         'String',txt,'EdgeColor','none');
+    axis([0 30 0 30]);
 else
     disp(txt);
 end

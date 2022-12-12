@@ -5,10 +5,10 @@ addpath cli/;
 
 confidenceType = Prompt("Select confidence method:", {"Signal Strength", "Confidence M", "Confidence X", "Random"}, 2).getUserInput();
 weightType = confidenceType;
-clear = 1;
-% clear = Prompt("Clear the plot before computing a new movement?", {"Do not clear plot.", "Clear plot before computing a new movement."}, 2).getUserInput() - 1;
 explorerType = Prompt("Select exploration method:", {"Triangulation", "Trilateration", "Hybrid", "DistAngle", "DistAngleAvg", "LoGlo"}, 4).getUserInput();
 % distType = Prompt("Select distance model:", {"Linear", "Squre root"}, 1).getUserInput();
+physical = -Prompt("Enable physical movement?", {"Yes", "No"}, 2).getUserInput() + 2;
+
 distType = 1;
 addAngleError = -Prompt("Add error to angle estimation?", {"Yes", "No"}, 2).getUserInput() + 2;
 freezePolicy = Prompt("When to freeze an FLS?", {"Don't freeze", "After each movement", "When it wants to move with a zero vector"}, 2).getUserInput();
@@ -87,12 +87,15 @@ shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", 
 
 
 
-for i=3:3
+for i=1:1
 %     shape = mod(ceil(i/3-1),2)+2;
 %     explorerType = 2^(mod(ceil(i/6)+1,3));
 %     alpha = 2*mod(i-1,3)+1;
 %     shape = 2;
-    alpha = i*2-1;
+    shape = i;
+    alpha = 5;
+    fixN = 5;
+
     switch shape
     case 1
         p = getPointCloudFromPNG("./assets/butterfly2.png");
@@ -128,5 +131,5 @@ for i=3:3
         p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
     end
 
-    flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, clear, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
+    flss = main2(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
 end

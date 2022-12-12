@@ -2,8 +2,8 @@ classdef FLSRatingM < FLSRating
     methods        
         function out = getRating(obj, fls)
             out = 1;
-            m = size(fls.missingNeighbors, 2);
-            k = size(fls.correctNeighbors, 2);
+            m = length(fls.missingNeighbors);
+            k = length(fls.correctNeighbors);
 
             n = m + k;
 
@@ -19,7 +19,6 @@ classdef FLSRatingM < FLSRating
             end
 
             gtlDistance = vecnorm([fls.correctNeighbors.gtl] - fls.gtl);
-            
 
             for i = 1:k
                 R = fls.r;

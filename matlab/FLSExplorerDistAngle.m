@@ -64,20 +64,20 @@ classdef FLSExplorerDistAngle < FLSExplorer
             obj.wayPoints(:,1) = P;
             obj.neighbor = N;
 
-            D1 = N.el - fls.el;
+            D1 = [N.el] - fls.el;
 
             dx = sign(D1(1));
             if dx == 0
                 dx = 1;
             end
             if fls.D == 3
-                D1 = D1 - [dx*0.1 0 0];
+                D1 = D1 - [dx*0.1; 0; 0];
             else
-                D1 = D1 - [dx*0.1 0];
+                D1 = D1 - [dx*0.1; 0];
             end
 
-            obj.d1 = norm(D1);
-            obj.d2 = norm(P - fls.el - D1);
+            obj.d1 = D1;
+            obj.d2 = P - fls.el - D1;
 
             success = 1;
         end
