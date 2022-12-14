@@ -41,8 +41,8 @@ end
 
 meregeAER = 1;
 breakSwarms = 1;
-t = 1;
-rounds = 1;
+t = 5;
+rounds = 100;
 regular = 1;
 
 flsCubes = {};
@@ -50,14 +50,14 @@ flsSwarms = {};
 plt = zeros(27, rounds);
 maxR = 0;
 
-CF = cpab10;
+% CF = cpab10;
 fixN = 7;
 physical = 0;
 
 
-for N=1:2
+for N=6:6
 if regular
-%     p = pngToPtcld("./assets/cat.png");
+%     p = pngToPtcld("./assets/teapot.png");
     switch N
         case 1
         p = readPtcld("./assets/PointClouds/pt1609.454.ptcld", -1);
@@ -74,7 +74,7 @@ if regular
         case 7
             p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
     end
-    OT = OcTree(p.', 'minSize', 0);
+    OT = OcTree(p.', 'minSize', 0, 'binCapacity', 150, 'style', 'weighted');
     cubeCount = OT.BinCount;
 else
     cubeCount = size(CF{1}.cubes,2);
@@ -120,7 +120,7 @@ for j=1:t
             continue;
         end
         if ~terminateCube(i)
-            terminate = relicNRound(cube, rounds, t*10 + i);
+            terminate = relicNRound(cube, rounds, N, j, i); % experiment, try, cube
             terminateCube(i) = terminate;
         end
 
@@ -134,7 +134,7 @@ for j=1:t
         end
     end
 
-    main3([flsCubes{:}], 20, j);
+    main3([flsCubes{:}], 100, j);
 
     for i=1:numCubes
         cube = flsCubes{i};

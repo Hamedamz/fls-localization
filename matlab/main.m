@@ -318,7 +318,7 @@ for j=1:rounds
 
         tries = 1 + tries;
 
-        if dH < 0.5 || tries == 5
+        if dH < 1 || tries == 2
             if allInOneSwarm 
                 disp('all FLSs are in one swarm');
             else

@@ -22,13 +22,13 @@ function flss = selectConcurrentExplorers2(allFlss)
             end
 
 
-            load('config.mat', 'swarmPolicy');
+%             load('config.mat', 'swarmPolicy');
 
-            if swarmPolicy == 1
+%             if swarmPolicy == 1
                 swarm = fls.swarm.getAllMembers([]);
-            else
-                swarm = [];
-            end
+%             else
+%                 swarm = [];
+%             end
 
             mConf = getMostConfident(elN);
 

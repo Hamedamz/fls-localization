@@ -87,14 +87,14 @@ shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", 
 
 
 
-for i=1:1
+for i=2:2
 %     shape = mod(ceil(i/3-1),2)+2;
 %     explorerType = 2^(mod(ceil(i/6)+1,3));
 %     alpha = 2*mod(i-1,3)+1;
 %     shape = 2;
     shape = i;
     alpha = 5;
-    fixN = 5;
+    fixN = 7;
 
     switch shape
     case 1
@@ -131,5 +131,5 @@ for i=1:1
         p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
     end
 
-    flss = main2(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
+    flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
 end

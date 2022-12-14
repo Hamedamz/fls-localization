@@ -1,18 +1,18 @@
-function [terminate, pltResults, j] = relicNRound(flss, rounds, ff)
+function [terminate, pltResults, j] = relicNRound(flss, rounds, N, T, C)
 
 updatePlot = 0;
 saveGif = updatePlot && 0;
 showInitialPlots = 0;
 showFinalPlot = 0;
-saveResults = 0;
+saveResults = 1;
 
 
 concurrentSelector = @selectConcurrentExplorers;
 
 
 if showInitialPlots
-    plotScreen([flss.gtl], 'blue', 3*ff+2);
-    plotScreen([flss.el], 'red', 3*ff+3);
+    plotScreen([flss.gtl], 'blue', 3*N+2);
+    plotScreen([flss.el], 'red', 3*N+3);
 end
 % text2 = reportMetrics(flss);
 % txt = sprintf("%s\n", text2);
@@ -21,18 +21,18 @@ end
 
 
 if updatePlot
-    h = plotScreen([flss.el], 'red', 3*ff+1);
+    h = plotScreen([flss.el], 'red', 3*N+1);
 end
-gifName = sprintf('gif/relic%d.gif', ff);
+gifName = sprintf('gif/relic%d.gif', N);
 
 
 pltResults = zeros(27, rounds);
 tries = 0;
 
 
-for j=ff*rounds+1:(ff+1)*rounds
+for j=1:rounds
     terminate = 0;
-    fprintf('\nROUND %d:\n', j);
+    fprintf('\nROUND %d of exp:%d try:%d cube:%d:\n', j, N, T, C);
 
     if all([flss.freeze] == 1) 
         disp('  all FLS are freezed');
@@ -253,7 +253,7 @@ for j=ff*rounds+1:(ff+1)*rounds
 
         tries = 1 + tries;
 
-        if dH < 0.5 || tries == 5
+        if dH < 0.6 || tries == 2
             if allInOneSwarm 
                 disp('all FLSs are in one swarm');
             else
@@ -289,9 +289,9 @@ txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", '', text2, dH);
 disp(txt);
 
 if showFinalPlot
-    figure(3*ff+1);
+    figure(3*N+1);
     clf
-    plotScreen([flss.el], 'black', 3*ff+1);
+    plotScreen([flss.el], 'black', 3*N+1);
     annotation('textbox',[.67 .7 .2 .2], ...
         'String',txt,'EdgeColor','none');
     axis([0 30 0 30]);
@@ -301,7 +301,7 @@ end
 
 
 if saveResults
-    fileName = sprintf('result%d.mat', ff);
+    fileName = sprintf('results/result%d-%d-%d.mat', N, T, C);
     save(fileName, 'pltResults');
 end
 

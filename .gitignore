@@ -38,5 +38,6 @@ matlab/config.mat
 matlab/gif/
 matlab/figs/
 matlab/result*.mat
+matlab/results/
 .DS_Store
 
