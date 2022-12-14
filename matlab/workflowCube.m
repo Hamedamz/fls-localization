@@ -55,7 +55,7 @@ fixN = 7;
 physical = 0;
 
 
-for N=6:6
+for N=1:1
 if regular
 %     p = pngToPtcld("./assets/teapot.png");
     switch N
@@ -113,17 +113,32 @@ end
 
 terminateCube = zeros(length(flsCubes));
 
+allFlss = [flsCubes{:}];
+
+
+h = plotScreen([allFlss.el], 'red', N);
+gifName = sprintf('gif/relicCube%d.gif', N);
+
 for j=1:t
-    for i=1:numCubes
-        cube = flsCubes{i};
-        if isempty(cube)
-            continue;
-        end
-        if ~terminateCube(i)
-            terminate = relicNRound(cube, rounds, N, j, i); % experiment, try, cube
-            terminateCube(i) = terminate;
+    
+    for q=1:rounds
+        for i=1:numCubes
+            cube = flsCubes{i};
+            if isempty(cube)
+                continue;
+            end
+            if ~terminateCube(i)
+                terminate = relicNRound(cube, 1, N, j, i); % experiment, try, cube
+                terminateCube(i) = terminate;
+            end
         end
 
+        updateScreen(h, [allFlss.el]);
+        exportgraphics(gcf,gifName,'Append',true);
+    end
+    
+
+    for i=1:numCubes
         flsSwarms{i} = {};
 
         % put flss of the cube in one swarm
@@ -133,8 +148,9 @@ for j=1:t
             cube(k).swarm.addMember(cube(1));
         end
     end
+    
 
-    main3([flsCubes{:}], 100, j);
+    main3(allFlss, 100, j);
 
     for i=1:numCubes
         cube = flsCubes{i};

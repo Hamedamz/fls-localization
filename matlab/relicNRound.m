@@ -4,7 +4,7 @@ updatePlot = 0;
 saveGif = updatePlot && 0;
 showInitialPlots = 0;
 showFinalPlot = 0;
-saveResults = 1;
+saveResults = 0;
 
 
 concurrentSelector = @selectConcurrentExplorers;
