@@ -136,11 +136,11 @@ txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", text1, text2, dH);
 
 fprintf("End of round %d\nMerged cubes\n%s\n", ff, txt);
 
-% figure(2*ff)
-% clf
-% plotScreen([flss.el], 'black', 2*ff);
-% annotation('textbox',[.7 .7 .1 .2], ...
-%     'String',txt,'EdgeColor','none')
+figure(2*ff)
+clf
+plotScreen([flss.el], 'black', 2*ff);
+annotation('textbox',[.7 .7 .3 .3], ...
+    'String',txt,'EdgeColor','none')
 % axis([0 30 0 30])
 % view([0 90])
 

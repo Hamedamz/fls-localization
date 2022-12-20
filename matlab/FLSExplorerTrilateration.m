@@ -23,7 +23,7 @@ classdef FLSExplorerTrilateration < FLSExplorer
 
             p = randperm(n);
             ncomb = nchoosek(p,3);
-            scatter(fls.el(1), fls.el(2), 'filled', 'green')
+%             scatter(fls.el(1), fls.el(2), 'filled', 'green')
 
             solved = 0;
             for i = 1:size(ncomb, 1)
@@ -38,12 +38,12 @@ classdef FLSExplorerTrilateration < FLSExplorer
                     d2 = norm(n2.gtl - fls.gtl);
                     d3 = norm(n3.gtl - fls.gtl);
 
-                    scatter(n1.el(1), n1.el(2), 'filled', 'blue')
-                    scatter(n2.el(1), n2.el(2), 'filled', 'blue')
-                    scatter(n3.el(1), n3.el(2), 'filled', 'blue')
-                    
-                    rectangle('Position',[n1.el.' - [d1 d1] 2*[d1 d1]],'Curvature',[1 1]);
-                    rectangle('Position',[n2.el.' - [d2 d2] 2*[d2 d2]],'Curvature',[1 1]);
+%                     scatter(n1.el(1), n1.el(2), 'filled', 'blue')
+%                     scatter(n2.el(1), n2.el(2), 'filled', 'blue')
+%                     scatter(n3.el(1), n3.el(2), 'filled', 'blue')
+%                     
+%                     rectangle('Position',[n1.el.' - [d1 d1] 2*[d1 d1]],'Curvature',[1 1]);
+%                     rectangle('Position',[n2.el.' - [d2 d2] 2*[d2 d2]],'Curvature',[1 1]);
 
                     [xout,yout] = circcirc(n1.el(1,1), n1.el(2,1), d1, n2.el(1,1), n2.el(2,1), d2);
 
@@ -59,10 +59,10 @@ classdef FLSExplorerTrilateration < FLSExplorer
         
                     if abs(dout1 - d3) < abs(dout2 - d3)
                         obj.wayPoints(:,1) = out1;
-                        scatter(out1(1), out1(2), 'green')
+%                         scatter(out1(1), out1(2), 'green')
                     else
                         obj.wayPoints(:,1) = out2;
-                        scatter(out2(1), out2(2), 'green')
+%                         scatter(out2(1), out2(2), 'green')
                     end
 
                     solved = 1;

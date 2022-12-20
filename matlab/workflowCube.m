@@ -52,28 +52,29 @@ maxR = 0;
 
 % CF = cpab10;
 fixN = 7;
-physical = 0;
+physical = 1;
 
 
-for N=1:1
+for N=3:3
 if regular
-%     p = pngToPtcld("./assets/teapot.png");
-    switch N
-        case 1
-        p = readPtcld("./assets/PointClouds/pt1609.454.ptcld", -1);
-        case 2
-            p = readPtcld("./assets/PointClouds/pt1608.758.ptcld", -1);
-        case 3
-            p = readPtcld("./assets/PointClouds/pt1625.760.ptcld", -1);
-        case 4
-            p = readPtcld("./assets/PointClouds/pt1620.997.ptcld", -1);
-        case 5
-            p = readPtcld("./assets/PointClouds/pt1617.1197.ptcld", -1);
-        case 6
-            p = readPtcld("./assets/PointClouds/pt1630.1562.ptcld", -1);
-        case 7
-            p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
-    end
+%     p = ptcld;
+    p = pngToPtcld("./assets/butterfly64.png");
+%     switch N
+%         case 1
+%         p = readPtcld("./assets/PointClouds/pt1609.454.ptcld", -1);
+%         case 2
+%             p = readPtcld("./assets/PointClouds/pt1608.758.ptcld", -1);
+%         case 3
+%             p = readPtcld("./assets/PointClouds/pt1625.760.ptcld", -1);
+%         case 4
+%             p = readPtcld("./assets/PointClouds/pt1620.997.ptcld", -1);
+%         case 5
+%             p = readPtcld("./assets/PointClouds/pt1617.1197.ptcld", -1);
+%         case 6
+%             p = readPtcld("./assets/PointClouds/pt1630.1562.ptcld", -1);
+%         case 7
+%             p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
+%     end
     OT = OcTree(p.', 'minSize', 0, 'binCapacity', 150, 'style', 'weighted');
     cubeCount = OT.BinCount;
 else
@@ -116,26 +117,26 @@ terminateCube = zeros(length(flsCubes));
 allFlss = [flsCubes{:}];
 
 
-h = plotScreen([allFlss.el], 'red', N);
-gifName = sprintf('gif/relicCube%d.gif', N);
+% h = plotScreen([allFlss.el], 'red', N);
+% gifName = sprintf('gif/relicCube%d.gif', N);
 
 for j=1:t
     
-    for q=1:rounds
+%     for q=1:rounds
         for i=1:numCubes
             cube = flsCubes{i};
             if isempty(cube)
                 continue;
             end
             if ~terminateCube(i)
-                terminate = relicNRound(cube, 1, N, j, i); % experiment, try, cube
+                terminate = relicNRound(cube, rounds, N, j, i); % experiment, try, cube
                 terminateCube(i) = terminate;
             end
         end
 
-        updateScreen(h, [allFlss.el]);
-        exportgraphics(gcf,gifName,'Append',true);
-    end
+%         updateScreen(h, [allFlss.el]);
+%         exportgraphics(gcf,gifName,'Append',true);
+%     end
     
 
     for i=1:numCubes

@@ -8,6 +8,7 @@ classdef FLSExplorer < handle
         freezePolicy
         lastConf = 0
         histNeighbors = []
+        d0 = 0
         d1 = 0 
         d2 = 0
     end
@@ -63,7 +64,8 @@ classdef FLSExplorer < handle
                 fls.flyTo(dest);
             end
             
-            
+
+            fls.d0 = fls.d0 + norm(obj.d0);
             fls.d1 = fls.d1 + norm(obj.d1);
             fls.d2 = fls.d2 + norm(obj.d2);
 

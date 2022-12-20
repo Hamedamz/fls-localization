@@ -11,6 +11,7 @@ classdef FLS < handle
         crm
         fixN
         distanceTraveled = 0
+        d0 = 0
         d1 = 0
         d2 = 0
         d3 = 0
@@ -85,9 +86,10 @@ classdef FLS < handle
                     j = j / norm(j);
                 end
 
-                phi = rand(1) * 2 * pi;
-%                 phi = 0;
+%                 phi = rand(1) * 2 * pi;
+                phi = 0;
                 e = i * cos(phi) + j * sin(phi);
+%                 e = i;
                 ve = v + e * rand(1) * obj.r;
                 nve = norm(ve);
 

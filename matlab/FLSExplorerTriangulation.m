@@ -99,13 +99,13 @@ classdef FLSExplorerTriangulation < FLSExplorer
             %disp(fls.id)
             %disp(R)
             %figure(3)
-            scatter(n1(1), n1(2), 'filled', 'blue')
-            scatter(n2(1), n2(2), 'filled', 'blue')
-            scatter(n3(1), n3(2), 'filled', 'blue')
-            scatter(fls.el(1), fls.el(2), 'filled', 'green')
-            scatter(R(1), R(2), 'green')
-            rectangle('Position',[ca.' - [ra ra] 2*[ra ra]],'Curvature',[1 1]);
-            rectangle('Position',[cb.' - [rb rb] 2*[rb rb]],'Curvature',[1 1]);
+%             scatter(n1(1), n1(2), 'filled', 'blue')
+%             scatter(n2(1), n2(2), 'filled', 'blue')
+%             scatter(n3(1), n3(2), 'filled', 'blue')
+%             scatter(fls.el(1), fls.el(2), 'filled', 'green')
+%             scatter(R(1), R(2), 'green')
+%             rectangle('Position',[ca.' - [ra ra] 2*[ra ra]],'Curvature',[1 1]);
+%             rectangle('Position',[cb.' - [rb rb] 2*[rb rb]],'Curvature',[1 1]);
 
             obj.wayPoints(:,1) = R;
             success = 1;

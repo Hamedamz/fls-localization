@@ -48,9 +48,9 @@ for i = 1:size(pointCloud, 2)
 end
 
 
-plotScreen([flss.gtl], 'blue', 3*ff+1);
-
-plotScreen([flss.el], 'red', 3*ff+2);
+% plotScreen([flss.gtl], 'blue', 3*ff+1);
+% 
+% plotScreen([flss.el], 'red', 3*ff+2);
 
 pltResults = zeros(26, rounds);
 tries = 0;
@@ -67,7 +67,7 @@ for j=1:rounds
 
     fprintf('\nROUND %d:\n', j);
 
-    concurrentExplorers = selectConcurrentExplorers4(flss);
+    concurrentExplorers = selectConcurrentExplorersSwarMer3(flss);
     numConcurrent = size(concurrentExplorers, 2);
     fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
 
@@ -156,9 +156,10 @@ for j=1:rounds
         pltResults(23,j) = sumL / movSuccess; % avg d localizing
     end
 
-    [s, avgE, avgC] = reportMetrics(flss);
+    [s, avgE, avgC, totalTraveled] = reportMetrics(flss);
     pltResults(25,j) = avgE;
     pltResults(26,j) = avgC;
+%     pltResults(27,j) = totalTraveled;
 
 
     fprintf('  %d FLS(s) moved\n', count);
@@ -166,14 +167,16 @@ for j=1:rounds
     updateScreen(h, [flss.el]);
     exportgraphics(gcf,gifName,'Append',true);
 
+    dH = hausdorff([flss.gtl], [flss.el]);
+    pltResults(5,j) = dH;
     s = fls.swarm.getAllMembers([]);
     if size(s,2) == size(flss,2)
         disp('all FLSs are in one swarm')
-        dH = hausdorff([flss.gtl], [flss.el]);
+        
         fprintf("Hausdorff Distance: %f\n", dH);
 
         tries = 1 + tries;
-        if dH < 0.01
+        if dH < 0.09
             break
         end
         if tries == 5
@@ -205,10 +208,10 @@ dH = hausdorff([flss.gtl], [flss.el]);
 txt = sprintf("%s\n%s\nHausdorff Distance: %f\n", text1, text2, dH);
 
 plotScreen([flss.el], 'black', 3*ff+3)
-annotation('textbox',[.7 .7 .1 .2], ...
+annotation('textbox',[.7 .7 .3 .3], ...
     'String',txt,'EdgeColor','none')
 
-fileName = sprintf('resultBin%d.mat', ff);
+fileName = sprintf('resultSwarmer%d.mat', ff);
 save(fileName, 'pltResults');
 
 end

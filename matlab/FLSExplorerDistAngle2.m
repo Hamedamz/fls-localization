@@ -47,6 +47,7 @@ classdef FLSExplorerDistAngle2 < FLSExplorer
                 D1 = D1 - [dx*0.1; 0];
             end
 
+            obj.d0 = V;
             obj.d1 = D1;
             obj.d2 = P - fls.el - D1;
             

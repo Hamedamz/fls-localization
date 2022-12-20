@@ -1,9 +1,9 @@
 function [flss, pltResults, j] = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, pointCloud, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, ff)
 
-updatePlot = 0;
+updatePlot = 1;
 saveGif = updatePlot && 0;
-showInitialPlots = 0;
-showFinalPlot = 0;
+showInitialPlots = 1;
+showFinalPlot = 1;
 saveResults = 0;
 
 rng('default');
