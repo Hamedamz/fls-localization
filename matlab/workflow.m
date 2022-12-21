@@ -45,7 +45,7 @@ end
 
 
 % rounds = Prompt("How many rounds?", {"10", "25", "50", "100", "200"}, 4).getUserInput();
-rounds = 100;
+rounds = 200;
 
 save('config.mat','addAngleError', 'swarmPolicy', 'angleError');
 
@@ -89,22 +89,22 @@ shape = Prompt("Select the shape:", {"butterfly", "cat", "teapot", "square3x3", 
 % 2,3 dragon alpha(0-360,0)
 % 4 big butterfly
 
-for i=1:6
+for i=1:3
 %     shape = mod(ceil(i/3-1),2)+2;
-    explorerType = 2^(mod(i-1,3));
-%     alpha = 2*mod(i-1,3)+1;
-%     shape = 2;
-    shape = 1;
-    alpha = ceil(i/3)*2-1;
+%     explorerType = 2^(mod(i-1,3));
+
+    shape = i;
+%     alpha = ceil(i/3)*2-1;
+    alpha = 5;
     fixN = 7;
     physical = 0;
 
     switch shape
-    case 1
+    case 12
         p = getPointCloudFromPNG("./assets/butterfly2.png");
-    case 2
+    case 15
         p = getPointCloudFromPNG("./assets/cat.png");
-    case 3
+    case 16
         p = getPointCloudFromPNG("./assets/teapot.png");
     case 4
         p = getPointCloudFromPNG("./assets/butterfly64.png");
@@ -112,15 +112,15 @@ for i=1:6
         p = readPtcld("./assets/PointClouds/pt1609.454.ptcld", -1);
     case 11
         p = readPtcld("./assets/PointClouds/pt1608.758.ptcld", -1);
-    case 12
+    case 1
         p = readPtcld("./assets/PointClouds/pt1625.760.ptcld", -1);
     case 13
         p = readPtcld("./assets/PointClouds/pt1620.997.ptcld", -1);
     case 14
         p = readPtcld("./assets/PointClouds/pt1617.1197.ptcld", -1);
-    case 15
+    case 2
         p = readPtcld("./assets/PointClouds/pt1630.1562.ptcld", -1);
-    case 16
+    case 3
         p = readPtcld("./assets/PointClouds/pt1619.1727.ptcld", -1);
     case 17
         p = square3;
@@ -134,13 +134,13 @@ for i=1:6
         p = readPtcld("./assets/pt1510.ptcld", -1);
     end
 
-    if explorerType == 4
-        swarmEnabled = 1;
-        swarmPolicy = 1;
+%     if explorerType == 4
+%         swarmEnabled = 1;
+%         swarmPolicy = 1;
         flss = main2(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
-    else
-        swarmEnabled = 0;
-        swarmPolicy = 0;
-        flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
-    end
+%     else
+%         swarmEnabled = 0;
+%         swarmPolicy = 0;
+%         flss = main(explorerType, confidenceType, weightType, distType, swarmEnabled, swarmPolicy, freezePolicy, alpha, p, physical, rounds, removeAlpha, concurrentPolicy, crm, fixN, i-1);
+%     end
 end

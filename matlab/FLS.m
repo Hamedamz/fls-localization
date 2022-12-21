@@ -28,6 +28,7 @@ classdef FLS < handle
 
         freeze = 0
         locked = 0
+        visited = 0
         physical = 0
         D
     end

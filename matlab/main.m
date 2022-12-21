@@ -72,6 +72,10 @@ for i = 1:size(pointCloud, 2)
 end
 
 
+% dH = hausdorff([flss.gtl], [flss.el]);
+% fprintf("Hausdorff Distance: %f\n", dH);
+% return;
+
 if showInitialPlots
     plotScreen([flss.gtl], 'blue', 3*ff+2);
     plotScreen([flss.el], 'red', 3*ff+3);

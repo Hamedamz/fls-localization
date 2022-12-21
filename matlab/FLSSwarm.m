@@ -3,6 +3,7 @@ classdef FLSSwarm < handle
         members = []
         enabled = 0
         swarmPolicy
+        size = 0
     end
 
     methods
@@ -94,6 +95,7 @@ classdef FLSSwarm < handle
                 m = fls.swarm.getAllMembers(m);
             end
             M = m;
+            obj.size = length(M);
         end
     end
 end

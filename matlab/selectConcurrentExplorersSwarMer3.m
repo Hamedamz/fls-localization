@@ -6,91 +6,73 @@ function flss = selectConcurrentExplorersSwarMer3(allFlss)
     for i = 1:n
         fls = allFlss(i);
         
-        if fls.freeze == 1
+        if fls.freeze == 1 || fls.visited == 1
             continue;
         end
 
         swarm = fls.swarm.getAllMembers([fls]);
-        N = -1;
+
+        for q=1:length(swarm)
+            swarm(q).visited = 1;
+        end
 
         for j=1:length(swarm)
             flsj = swarm(j);
-            knn = getKNN(flsj, allFlss, minNumberOfNeighbors);
-            maxR = max(vecnorm([knn.el] - flsj.el));
-            eNeighbors = getRS(flsj, allFlss, maxR);
-            gtIdx = rangesearch([allFlss.gtl].',[flsj.gtl].', maxR);
-            gtNeighbors = allFlss(gtIdx{:});
-            seNeighbors = intersect(eNeighbors, swarm);
-            osgtNeighbors = setdiff(gtNeighbors, swarm);
-            mNeighbors = setdiff(osgtNeighbors, seNeighbors);
-%             mNeighbors = mNeighbors(~[mNeighbors.freeze]);
-            minP = length(swarm);
-            anchor = flsj;
-            for k=1:length(mNeighbors)
-                mFls = mNeighbors(k);
-                if mFls.freeze
-                    continue;
+            knn = getKNN(flsj, allFlss, minNumberOfNeighbors+1);
+            missingN = setdiff(knn, swarm);
+            missingAN = missingN(~[missingN.freeze]);
+
+            if ~isempty(missingAN)
+                misingS = [];
+                maxP = length(swarm);
+                maxPFls = flsj;
+
+                for k=1:length(missingAN)
+                    mFls = missingAN(k);
+                    if ~mFls.freeze
+                        mSwarm = mFls.swarm.getAllMembers([mFls]);
+                        for q=1:length(mSwarm)
+                            mSwarm(q).freeze = 1;
+                        end
+                        misingS = [misingS mFls];
+                        if length(mSwarm) > maxP
+                            maxP = length(mSwarm);
+                            maxPFls = mFls;
+                        end
+                    end
                 end
-                N = 1;
-                swarmn = mFls.swarm.getAllMembers([mFls]);
-                p = length(swarmn);
-                if p < minP
-                    minP = p;
-                    anchor = mFls;
+                
+                if ~isempty(misingS)
+                    localizingCandidates = [misingS flsj];
+                    localizingCandidates = setdiff(localizingCandidates, maxPFls);
+
+                    for p=1:length(localizingCandidates)
+                        lFls = localizingCandidates(p);
+                        lFls.celNeighbors = maxPFls;
+                        flss = [flss lFls];
+                    end
+
+                    for q=1:length(swarm)
+                        swarm(q).freeze = 1;
+                    end
+
+                    break;
                 end
 
+            elseif ~isempty(missingN)
+                flsj.celNeighbors = missingN(1);
+                flss = [flss flsj];
 
-                for kk = 1:length(swarmn)
-                    swarmn(kk).freeze = 1;
+                for q=1:length(swarm)
+                    swarm(q).freeze = 1;
                 end
-        
-            end
 
-            if N == 1
-                localizers = [flsj mNeighbors];
-                localizers = setdiff(localizers, anchor);
-    
-                for k=1:length(localizers)
-                    lFls = localizers(k);
-                    lFls.celNeighbors = anchor;
-                    flss = [flss lFls];
-                end
-            end
-
-            if N ~= -1
-                break
+                break;
             end
         end
-
-
-        for j = 1:size(swarm, 2)
-            swarm(j).freeze = 1;
-        end
-
-
-%         if N == -1
-%             continue;
-%         end
-% 
-%         if fls.id > N.id
-%             AFls = N;
-%             LFls = fls;
-%         else
-%             AFls = fls;
-%             LFls = N;
-%         end
-% 
-%         LFls.celNeighbors = AFls;
-% 
-%         swarmn = N.swarm.getAllMembers([N]);
-% 
-%         for k = 1:size(swarmn, 2)
-%             swarmn(k).freeze = 1;
-%         end
-% 
-%         flss = [flss LFls];
     end
 end
+
 
 
 

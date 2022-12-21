@@ -7,8 +7,10 @@ if size(pointCloud,1) == 3
     axis equal
 else
     h = scatter(pointCloud(1,:), pointCloud(2,:), color, 'filled');
-    axis([0 30 0 30])
+%     axis([0 30 0 30])
+    axis equal
     axis square
+    axis equal
 end
 
 grid on
