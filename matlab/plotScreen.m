@@ -1,6 +1,7 @@
 function h = plotScreen(pointCloud, color, f)
 
 figure(f)
+clf
 
 if size(pointCloud,1) == 3
     h = scatter3(pointCloud(1,:), pointCloud(2,:), pointCloud(3,:), color, 'filled');

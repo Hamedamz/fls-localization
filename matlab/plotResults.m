@@ -1,5 +1,6 @@
 function plotResults(T, fig, varargin)
-% figure(4)
+figure(fig)
+clf
 
 A = varargin{1};
 
@@ -50,6 +51,6 @@ end
 
 % hold off
 % axes('Xlim', [1,28], 'XTick', 1:2:36);
-
-
+set(gcf, 'Position',  [0 0 560 210])
+legend(varargin{2}, varargin{4}, varargin{6});
 end

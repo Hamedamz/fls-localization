@@ -150,7 +150,9 @@ for j=1:rounds
     fprintf('  %d swarm(s) with %s members exist\n', numSwarms, strjoin(string(swarmPopulation), ', '));
 
 
-    uniqAnchors = unique(anchors);
+    [uniqAnchors,~,ix] = unique(anchors);
+    C = accumarray(ix,1).';
+    C=C(C~=1);
 
     pltResults(2,j) = count; % number of all moveing FLSs
     pltResults(3,j) = sumD / count; % average distance traveled by al FLSs
@@ -165,14 +167,19 @@ for j=1:rounds
     pltResults(16,j) = mean(swarmPopulation); % average population of swarms
     pltResults(17,j) = max(swarmPopulation);
     pltResults(18,j) = length(uniqAnchors); % number of anchors
-    pltResults(22,j) = length(unique(setdiff(anchors, uniqAnchors))); % number of shared anchors
+    pltResults(22,j) = length(C); % number of shared anchors
+
     if numConcurrent == 0
         pltResults(23,j) = 0;
     else
         pltResults(23,j) = sumL / movSuccess; % avg distance traveled by localizing FLSs
     end
-    pltResults(27,j) = (sumD - sumL) / (count - movSuccess); % average distance traveled by swarms
 
+    if count - movSuccess == 0
+        pltResults(27,j) = 0;
+    else
+        pltResults(27,j) = (sumD - sumL) / (count - movSuccess); % average distance traveled by swarms
+    end
 
 
 

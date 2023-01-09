@@ -19,7 +19,7 @@ function flss = selectConcurrentExplorersSwarMer3(allFlss)
         for j=1:length(swarm)
             flsj = swarm(j);
             knn = getKNN(flsj, allFlss, minNumberOfNeighbors+1);
-            missingN = setdiff(knn, swarm);
+            missingN = knn(~ismember(knn, swarm));
             missingAN = missingN(~[missingN.freeze]);
 
             if ~isempty(missingAN)
@@ -44,10 +44,12 @@ function flss = selectConcurrentExplorersSwarMer3(allFlss)
                 
                 if ~isempty(misingS)
                     localizingCandidates = [misingS flsj];
-                    localizingCandidates = setdiff(localizingCandidates, maxPFls);
 
                     for p=1:length(localizingCandidates)
                         lFls = localizingCandidates(p);
+                        if lFls.id == maxPFls
+                            continue;
+                        end
                         lFls.celNeighbors = maxPFls;
                         flss = [flss lFls];
                     end

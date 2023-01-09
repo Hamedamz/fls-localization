@@ -93,9 +93,9 @@ for i=1:3
 %     shape = mod(ceil(i/3-1),2)+2;
 %     explorerType = 2^(mod(i-1,3));
 
-    shape = i;
+    shape = 1;
 %     alpha = ceil(i/3)*2-1;
-    alpha = 5;
+    alpha = 2*i-1;
     fixN = 7;
     physical = 0;
 
