@@ -1,3 +1,5 @@
+% Final binary: mereges swarms using closest anchor
+
 function flss = selectConcurrentExplorers4(allFlss)
     n = size(allFlss,2);
     if n < 1

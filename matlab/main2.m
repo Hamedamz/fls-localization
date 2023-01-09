@@ -10,6 +10,7 @@ dispatchers = {Dispatcher([0; 0]) Dispatcher([0; 0; 0])};
 distModelSet = {FLSDistLinear() FLSDistSquareRoot()};
 ratingSet = {FLSRatingNormalizedDistanceGTL() FLSRatingM() FLSRatingX() FLSRatingRandom() FLSRatingMissingNeighbors()};
 
+binary = 1;
 
 for i = 1:size(pointCloud, 2)
     point = pointCloud(:,i);
@@ -78,7 +79,12 @@ for j=1:rounds
 
     fprintf('\nROUND %d:\n', j);
 
-    concurrentExplorers = selectConcurrentExplorersSwarMer3(flss);
+    if binary
+        concurrentExplorers = selectConcurrentExplorers4(flss);
+    else
+        concurrentExplorers = selectConcurrentExplorersSwarMer3(flss);
+    end
+
     numConcurrent = size(concurrentExplorers, 2);
     fprintf('  %d FLS(s) are selected to adjust\n', numConcurrent);
 
@@ -200,7 +206,7 @@ for j=1:rounds
 
         tries = 1 + tries;
         if dH < 0.09
-            break
+            break;
         end
         if tries == 5
             break;
